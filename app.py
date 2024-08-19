@@ -92,7 +92,12 @@ def send_transaction(web3, private_key):
         }
 
         # Estimate gas cost
-        gas = web3.eth.estimate_gas(transaction)
+        try:
+            gas = web3.eth.estimate_gas(transaction)
+        except Exception as e:
+            logger.error(f"Failed to estimate gas for transaction: {str(e)}")
+            return False
+
         transaction['gas'] = gas
         transaction['gasPrice'] = web3.eth.gas_price
 
