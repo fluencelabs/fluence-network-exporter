@@ -49,7 +49,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ need.release-please.outputs.tag_name }}
+          ref: ${{ needs.release-please.outputs.tag-name }}
 
       - name: Import secrets
         uses: hashicorp/vault-action@v2.4.3
