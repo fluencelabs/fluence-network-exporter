@@ -20,9 +20,6 @@ logging.getLogger("werkzeug").disabled = True
 cli = sys.modules['flask.cli']
 cli.show_server_banner = lambda *x: None
 
-# Initialize prometheus registry
-registry = CollectorRegistry()
-
 # Define schema for a file with addresses to scrape balance of
 class AddressEntry(BaseModel):
     address: constr(min_length=1)
@@ -30,6 +27,12 @@ class AddressEntry(BaseModel):
 
 class ConfigSchema(BaseModel):
     addresses: Optional[conlist(AddressEntry, min_length=1)]
+
+# Initialize Prometheus metrics
+registry = CollectorRegistry()
+block_height_metric = Gauge('gelato_block_height', 'The latest block height', registry=registry)
+balance_metrics = None
+transaction_success_metric = None
 
 def initialize():
     rpc_url = os.getenv("RPC_URL")
@@ -52,6 +55,8 @@ def initialize():
                     config_data = yaml.safe_load(file)
                     config = ConfigSchema(**config_data)
                     addresses_to_monitor = config.addresses or []
+                    if addresses_to_monitor:
+                        balance_metrics = Gauge('gelato_balance', 'Balance of Ethereum addresses', ['address', 'name'], registry=registry)
                 except (ValidationError, yaml.YAMLError) as e:
                     logger.error(f"Error loading or validating the addresses file {addresses_file}: {e}. Exiting.")
                     exit(1)
@@ -136,15 +141,11 @@ web3 = connect_rpc(rpc_url)
 
 app = Flask(__name__)
 
-# Initialize Prometheus metrics
-block_height_metric = Gauge('gelato_block_height', 'The latest block height', registry=registry)
-
 def collect_metrics():
     latest_block_height = web3.eth.block_number
     block_height_metric.set(latest_block_height)
 
     if addresses_to_monitor:
-        balance_metrics = Gauge('gelato_balance', 'Balance of Ethereum addresses', ['address', 'name'], registry=registry)
         for entry in addresses_to_monitor:
             address = entry.address
             name = entry.name
