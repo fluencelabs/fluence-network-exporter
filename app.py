@@ -31,7 +31,7 @@ class ConfigSchema(BaseModel):
 # Initialize Prometheus metrics
 registry = CollectorRegistry()
 block_height_metric = Gauge('gelato_block_height', 'The latest block height', registry=registry)
-balance_metrics = None
+balance_metric = None
 transaction_success_metric = None
 
 def initialize():
@@ -56,7 +56,7 @@ def initialize():
                     config = ConfigSchema(**config_data)
                     addresses_to_monitor = config.addresses or []
                     if addresses_to_monitor:
-                        balance_metrics = Gauge('gelato_balance', 'Balance of Ethereum addresses', ['address', 'name'], registry=registry)
+                        balance_metric = Gauge('gelato_balance', 'Balance of Ethereum addresses', ['address', 'name'], registry=registry)
                 except (ValidationError, yaml.YAMLError) as e:
                     logger.error(f"Error loading or validating the addresses file {addresses_file}: {e}. Exiting.")
                     exit(1)
@@ -66,7 +66,7 @@ def initialize():
     else:
         logger.info("No addresses file provided. No balances will be monitored.")
 
-    return rpc_url, addresses_to_monitor, private_key, transaction_interval, port
+    return rpc_url, addresses_to_monitor, private_key, transaction_interval, port, balance_metric
 
 # Retry configuration for connecting to the RPC endpoint
 @retry(
@@ -136,7 +136,7 @@ def start_transaction_task(web3, private_key, interval):
     else:
         logger.info("No PRIVATE_KEY provided. Transactions will not be sent.")
 
-rpc_url, addresses_to_monitor, private_key, transaction_interval, port = initialize()
+rpc_url, addresses_to_monitor, private_key, transaction_interval, port, balance_metric = initialize()
 web3 = connect_rpc(rpc_url)
 
 app = Flask(__name__)
@@ -151,7 +151,7 @@ def collect_metrics():
             name = entry.name
             balance_wei = web3.eth.get_balance(address)
             balance_eth = web3.from_wei(balance_wei, 'ether')
-            balance_metrics.labels(address=address, name=name).set(balance_eth)
+            balance_metric.labels(address=address, name=name).set(balance_eth)
 
 @app.route('/')
 def root():
