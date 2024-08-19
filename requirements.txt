@@ -1,6 +1,6 @@
-web3
-prometheus-client
-flask
-tenacity
-pydantic
-pyyaml
+flask==3.0.3
+web3==6.20.2
+prometheus_client==0.20.0
+pydantic==2.8.2
+tenacity==9.0.0
+pyyaml==6.0.2
