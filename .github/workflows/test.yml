@@ -1,0 +1,27 @@
+name: "test"
+
+on:
+  pull_request:
+    paths-ignore:
+      - "**.md"
+      - ".github/**"
+      - "!.github/workflows/test.yml"
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build container
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          cache-from: type=gha
