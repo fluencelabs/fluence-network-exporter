@@ -53,7 +53,7 @@ def initialize():
                     config = ConfigSchema(**config_data)
                     addresses_to_monitor = config.addresses or []
                 except (ValidationError, yaml.YAMLError) as e:
-                    logger.error(f"Error loading or validating the addresses file: {e}. Exiting.")
+                    logger.error(f"Error loading or validating the addresses file {addresses_file}: {e}. Exiting.")
                     exit(1)
         else:
             logger.error(f"Addresses file '{addresses_file}' does not exist. Exiting.")
