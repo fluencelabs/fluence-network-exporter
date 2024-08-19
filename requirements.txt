@@ -1,0 +1,6 @@
+web3
+prometheus-client
+flask
+tenacity
+pydantic
+pyyaml
