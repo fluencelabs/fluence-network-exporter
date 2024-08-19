@@ -114,7 +114,7 @@ def send_transaction(web3, private_key):
             logger.info(f"Transaction successful: {tx_hash.hex()} with estimated gas: {gas}")
             return True
         else:
-            logger.error(f"Transaction failed: {tx_hash.hex()}")
+            logger.error(f"Transaction {tx_hash.hex()} failed: {transaction}")
             return False
     except Exception as e:
         logger.error(f"Transaction error: {str(e)}")
