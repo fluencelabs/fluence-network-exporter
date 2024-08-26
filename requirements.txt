@@ -4,5 +4,5 @@ prometheus_client==0.20.0
 pydantic==2.8.2
 tenacity==9.0.0
 pyyaml==6.0.2
-gql
-base58
+gql==3.5.0
+base58==2.1.1
