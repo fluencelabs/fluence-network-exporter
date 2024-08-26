@@ -58,12 +58,12 @@ if __name__ == '__main__':
         graph_node = gm.connect_graph_node(graph_node_url)
 
         if config.transaction and config.transaction.enabled:
-            private_key = os.getenv("PRIVATE_KEY") or load_private_key(
+            private_key = os.getenv("PRIVATE_KEY") or config_loader.load_private_key(
                 config.transaction.private_key_path)
             if private_key:
                 transaction_interval = nm.interval_to_seconds(
                     config.transaction.interval)
-                start_transaction_task(rpc, private_key, transaction_interval)
+                nm.start_transaction_task(rpc, private_key, transaction_interval)
             else:
                 logger.error(
                     "Transaction is enabled, but the private key could not be loaded. Transactions will not be sent.")

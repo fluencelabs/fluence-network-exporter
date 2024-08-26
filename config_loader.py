@@ -6,7 +6,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Pydantic Models
+# Config schema
 class AddressEntry(BaseModel):
     address: constr(min_length=1)
     name: constr(min_length=1)
@@ -54,7 +54,7 @@ def load_private_key(private_key_path: Optional[str]) -> Optional[str]:
             try:
                 with open(key_path, 'r') as key_file:
                     private_key = key_file.read().strip()
-                    logger.info(f"Successfully loaded private key from {private_key_path}")
+                    logger.debug(f"Successfully loaded private key from {private_key_path}")
                     return private_key
             except Exception as e:
                 logger.error(f"Error reading private key from {private_key_path}: {e}")
@@ -63,5 +63,4 @@ def load_private_key(private_key_path: Optional[str]) -> Optional[str]:
             logger.error(f"Private key file does not exist or is not a file: {private_key_path}")
             return None
     else:
-        logger.info("No private key path provided.")
         return None
