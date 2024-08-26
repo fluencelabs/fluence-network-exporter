@@ -1,23 +1,27 @@
-# gelato-exporter
+# fluence-network-exporter
 
-## Options
+## Configuration
 
-| env variable         | description                                          | default | required |
-| -------------------- | ---------------------------------------------------- | ------- | -------- |
-| RPC_URL              | rpc url                                              |         | true     |
-| PORT                 | exporter listening port                              | 8001    | false    |
-| PRIVATE_KEY          | private key to use to send transactions              |         | false    |
-| TRANSACTION_INTERVAL | how often to perform transactions in seconds         | 60      | false    |
-| ADDRESSES_FILE       | yml file with addresses list to gather balances from |         | false    |
-
-If `PRIVATE_KEY` is set exporter will execute transaction to itself once in
-`TRANSACTION_INTERVAL` triggering block production.
-
-In order to collect balance of eth addresses specify them in `ADDRESSES_FILE` in
-the following format:
+| env variable | description                             | default | required |
+| ------------ | --------------------------------------- | ------- | -------- |
+| PORT         | exporter listening port                 | 8001    | false    |
+| PRIVATE_KEY  | private key to use to send transactions |         | false    |
+| CONFIG_FILE  | path to config file                     |         | true     |
 
 ```yml
+rpc_url: "https://rpc.testnet.fluence.dev"
+graph_node_url: 'https://graph-node.stage.fluence.dev/subgraphs/name/fluence-deal-contracts-3d15b6b4'
+
 addresses:
   - address: "0x9262768725134b7d52041FAb42287EA2147D0c77"
     name: foobar
+    minimum_balance: 100000000
+
+providers:
+  - "0x957b816cab1b9e429c3282c8f389f1fd2f8cfe1a"
+
+transaction:
+    enabled: true
+    interval: "60s"
+    private_key_path: "/secrets/private.key" # can be provided in env variable PRIVATE_KEY
 ```

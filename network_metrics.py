@@ -1,27 +1,33 @@
+from metrics import *
 from web3 import Web3
 import time
 import threading
 from config_loader import AddressEntry
-
 import logging
+
+# Set up logging
 logger = logging.getLogger(__name__)
 
-from metrics import *
 
 def connect_rpc(url: str) -> Web3:
     """Connect to RPC."""
-    web3 = Web3(Web3.HTTPProvider(url))
-    if web3.is_connected():
-        logger.info(f"Successfully connected to the RPC endpoint: {url}")
-        return web3
-    else:
-        raise ConnectionError(f"Failed to connect to the RPC endpoint: {url}")
+    try:
+        web3 = Web3(Web3.HTTPProvider(url))
+        if web3.is_connected():
+            logger.info(f"Successfully connected to the RPC endpoint: {url}")
+            return web3
+        else:
+            raise ConnectionError(
+                f"Failed to connect to the RPC endpoint: {url}")
+    except Exception as e:
+        logger.error(f"Error connecting to RPC endpoint {url}: {e}")
+        raise
 
 
 def send_transaction(web3: Web3, private_key: str) -> bool:
     """Function to send transaction."""
-    account = web3.eth.account.from_key(private_key)
     try:
+        account = web3.eth.account.from_key(private_key)
         chain_id = web3.eth.chain_id
         nonce = web3.eth.get_transaction_count(account.address)
 
@@ -36,11 +42,11 @@ def send_transaction(web3: Web3, private_key: str) -> bool:
         # Estimate gas cost
         try:
             gas = web3.eth.estimate_gas(transaction)
+            transaction['gas'] = gas
         except Exception as e:
             logger.error(f"Failed to estimate gas for transaction: {str(e)}")
             return False
 
-        transaction['gas'] = gas
         transaction['gasPrice'] = web3.eth.gas_price
 
         signed_txn = web3.eth.account.sign_transaction(
@@ -62,11 +68,16 @@ def send_transaction(web3: Web3, private_key: str) -> bool:
 
 def interval_to_seconds(interval: str) -> int:
     """Convert interval to seconds."""
-    time_multiplier = {'s': 1, 'm': 60, 'h': 3600}
-    unit = interval[-1]
-    if unit not in time_multiplier:
-        raise ValueError(f"Invalid time unit in interval: {interval}")
-    return int(interval[:-1]) * time_multiplier[unit]
+    try:
+        time_multiplier = {'s': 1, 'm': 60, 'h': 3600}
+        unit = interval[-1]
+        if unit not in time_multiplier:
+            raise ValueError(
+                f"Invalid time unit in interval: {interval}. Valid units are s, m and h")
+        return int(interval[:-1]) * time_multiplier[unit]
+    except ValueError as e:
+        logger.error(f"Interval conversion error: {e}")
+        raise
 
 
 def start_transaction_task(web3: Web3, private_key: str, interval: int):
@@ -77,31 +88,46 @@ def start_transaction_task(web3: Web3, private_key: str, interval: int):
             FLUENCE_TRANSACTION_STATUS.set(0 if success else 1)
             time.sleep(interval)
 
-    thread = threading.Thread(target=task)
-    thread.daemon = True
-    thread.start()
+    try:
+        thread = threading.Thread(target=task)
+        thread.daemon = True
+        thread.start()
+        logger.info(
+            f"Transaction task started with interval {interval} seconds")
+    except Exception as e:
+        logger.error(f"Failed to start transaction task: {e}")
+        raise
 
 
-def collect_metrics(
-        rpc: Web3,
-        addresses_to_monitor: list[AddressEntry]):
+def collect_metrics(rpc: Web3, addresses_to_monitor: list[AddressEntry]):
     """Collect block height and address balances"""
-    latest_block_height = rpc.eth.block_number
-    FLUENCE_BLOCK_HEIGHT.set(latest_block_height)
+    try:
+        latest_block_height = rpc.eth.block_number
+        FLUENCE_BLOCK_HEIGHT.set(latest_block_height)
+        logger.debug(f"Collected block height: {latest_block_height}")
 
-    if addresses_to_monitor:
-        for entry in addresses_to_monitor:
-            address = entry.address
-            name = entry.name
-            minimum_balance = entry.minimum_balance
+        if addresses_to_monitor:
+            for entry in addresses_to_monitor:
+                address = entry.address
+                name = entry.name
+                minimum_balance = entry.minimum_balance
 
-            balance_wei = rpc.eth.get_balance(address)
-            balance_eth = rpc.from_wei(balance_wei, 'ether')
+                balance_wei = rpc.eth.get_balance(address)
+                balance_eth = rpc.from_wei(balance_wei, 'ether')
 
-            FLUENCE_BALANCE.labels(address=address, name=name).set(balance_eth)
-            FLUENCE_BALANCE_MINIMUM.labels(
-                address=address, name=name).set(minimum_balance)
+                FLUENCE_BALANCE.labels(
+                    address=address, name=name).set(balance_eth)
+                logger.debug(f"Address {address} ({name}) balance is: {balance_eth} FLT")
+                FLUENCE_BALANCE_MINIMUM.labels(
+                    address=address, name=name).set(minimum_balance)
 
-            if balance_eth < minimum_balance:
-                logger.warning(
-                    f"Address {address} ({name}) has a balance below the minimum threshold: {balance_eth} < {minimum_balance}")
+
+                if balance_eth < minimum_balance:
+                    logger.warning(
+                        f"Address {address} ({name}) has a balance below the minimum threshold: {balance_eth} < {minimum_balance}")
+                else:
+                    logger.info(
+                        f"Address {address} ({name}) has sufficient balance: {balance_eth} FLT")
+    except Exception as e:
+        logger.error(f"Error collecting network metrics: {e}")
+        raise

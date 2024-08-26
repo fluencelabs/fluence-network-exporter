@@ -2,10 +2,11 @@ import yaml
 from pydantic import BaseModel, ValidationError, constr, conlist, condecimal
 from typing import List, Optional
 import pathlib
-
 import logging
+
 logger = logging.getLogger(__name__)
 
+# Pydantic Models
 class AddressEntry(BaseModel):
     address: constr(min_length=1)
     name: constr(min_length=1)
@@ -26,18 +27,41 @@ class ConfigSchema(BaseModel):
 
 def load_config(config_file_path: str) -> ConfigSchema:
     """Load and validate the configuration file."""
-    with open(config_file_path) as file:
-        try:
+    try:
+        with open(config_file_path, 'r') as file:
             config_data = yaml.safe_load(file)
             config = ConfigSchema(**config_data)
+            logger.debug(f"Successfully loaded and validated config from {config_file_path}")
             return config
-        except (ValidationError, yaml.YAMLError) as e:
-            logger.error(f"Error loading or validating the config file {config_file_path}: {e}. Exiting.")
-            exit(1)
+    except FileNotFoundError:
+        logger.error(f"Config file not found: {config_file_path}. Please provide a valid file path.")
+        exit(1)
+    except yaml.YAMLError as e:
+        logger.error(f"Error parsing the YAML file: {config_file_path}. Error: {e}")
+        exit(1)
+    except ValidationError as e:
+        logger.error(f"Configuration validation error: {e.json()}")
+        exit(1)
+    except Exception as e:
+        logger.error(f"Unexpected error while loading config: {e}")
+        exit(1)
 
 def load_private_key(private_key_path: Optional[str]) -> Optional[str]:
     """Load a private key from the specified file path."""
-    if private_key_path and pathlib.Path(private_key_path).exists():
-        with open(private_key_path, 'r') as key_file:
-            return key_file.read().strip()
-    return None
+    if private_key_path:
+        key_path = pathlib.Path(private_key_path)
+        if key_path.exists() and key_path.is_file():
+            try:
+                with open(key_path, 'r') as key_file:
+                    private_key = key_file.read().strip()
+                    logger.info(f"Successfully loaded private key from {private_key_path}")
+                    return private_key
+            except Exception as e:
+                logger.error(f"Error reading private key from {private_key_path}: {e}")
+                raise
+        else:
+            logger.error(f"Private key file does not exist or is not a file: {private_key_path}")
+            return None
+    else:
+        logger.info("No private key path provided.")
+        return None
