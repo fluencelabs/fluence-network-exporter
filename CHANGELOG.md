@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.0.0...v2.0.1) (2024-08-27)
+
+
+### Bug Fixes
+
+* Add missing requirements ([#8](https://github.com/fluencelabs/fluence-network-exporter/issues/8)) ([08db683](https://github.com/fluencelabs/fluence-network-exporter/commit/08db6836c754ec47cc0c34556e203575257f0a95))
+
 ## [2.0.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v1.0.1...v2.0.0) (2024-08-27)
 
 
