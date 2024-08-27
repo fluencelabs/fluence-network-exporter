@@ -50,7 +50,7 @@ if __name__ == '__main__':
 
         rpc_url = config.rpc_url
         graph_node_url = config.graph_node_url
-        port = int(os.getenv("FLUENCE_NETWORK_EXPORTER_PORT", config.port))
+        port = int(os.getenv("PORT", config.port))
 
         addresses_to_monitor = config.addresses
         providers_to_monitor = config.providers
