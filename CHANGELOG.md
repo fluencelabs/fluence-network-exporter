@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v1.0.1...v2.0.0) (2024-08-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* Scrape graph-node for peer and deals metrics ([#5](https://github.com/fluencelabs/fluence-network-exporter/issues/5))
+
+### Features
+
+* Scrape graph-node for peer and deals metrics ([#5](https://github.com/fluencelabs/fluence-network-exporter/issues/5)) ([65fb6f7](https://github.com/fluencelabs/fluence-network-exporter/commit/65fb6f794fbecc2cfcbcd6a0b3b5d1d70259a1bf))
+
 ## [1.0.1](https://github.com/fluencelabs/gelato-exporter/compare/v1.0.0...v1.0.1) (2024-08-19)
 
 
