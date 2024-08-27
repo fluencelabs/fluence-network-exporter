@@ -82,5 +82,5 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: |
-            fluencelabs/gelato-exporter:latest
-            fluencelabs/gelato-exporter:${{ needs.release-please.outputs.version }}
+            fluencelabs/fluence-network-exporter:latest
+            fluencelabs/fluence-network-exporter:${{ needs.release-please.outputs.version }}
