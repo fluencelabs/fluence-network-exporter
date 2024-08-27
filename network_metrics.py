@@ -126,7 +126,7 @@ def collect_metrics(rpc: Web3, addresses_to_monitor: list[AddressEntry]):
                     logger.warning(
                         f"Address {address} ({name}) has a balance below the minimum threshold: {balance_eth} < {minimum_balance}")
                 else:
-                    logger.info(
+                    logger.debug(
                         f"Address {address} ({name}) has sufficient balance: {balance_eth} FLT")
     except Exception as e:
         logger.error(f"Error collecting network metrics: {e}")
