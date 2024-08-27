@@ -22,5 +22,5 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 USER appuser
 ENV FLASK_SKIP_DOTENV=true
-COPY app.py app.py
+COPY *.py .
 CMD ["python", "app.py"]
