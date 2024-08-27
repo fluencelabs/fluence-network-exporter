@@ -23,6 +23,7 @@ app = Flask(__name__)
 
 registry = metrics.registry
 
+
 @app.route('/')
 def root():
     return "Exporter is running", 200
@@ -63,7 +64,8 @@ if __name__ == '__main__':
             if private_key:
                 transaction_interval = nm.interval_to_seconds(
                     config.transaction.interval)
-                nm.start_transaction_task(rpc, private_key, transaction_interval)
+                nm.start_transaction_task(
+                    rpc, private_key, transaction_interval)
             else:
                 logger.error(
                     "Transaction is enabled, but the private key could not be loaded. Transactions will not be sent.")
