@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.0.2](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.0.1...v2.0.2) (2024-08-27)
+
+
+### Bug Fixes
+
+* Fix port var ([#10](https://github.com/fluencelabs/fluence-network-exporter/issues/10)) ([9861123](https://github.com/fluencelabs/fluence-network-exporter/commit/9861123d984f295f6ca4aac561f22e1e739a1713))
+* Move balance log to debug ([#12](https://github.com/fluencelabs/fluence-network-exporter/issues/12)) ([14fa619](https://github.com/fluencelabs/fluence-network-exporter/commit/14fa619af76d8022656dfe4c3d23bb085c256c04))
+* Workaround for transaction status initializing to 0 ([#13](https://github.com/fluencelabs/fluence-network-exporter/issues/13)) ([d8aef97](https://github.com/fluencelabs/fluence-network-exporter/commit/d8aef974a83997048800fcba3c26d1fb02ebf9c2))
+
 ## [2.0.1](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.0.0...v2.0.1) (2024-08-27)
 
 
