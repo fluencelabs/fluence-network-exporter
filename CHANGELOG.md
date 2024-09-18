@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.0.2...v2.1.0) (2024-09-18)
+
+
+### Features
+
+* Collect latest block seen by subgraph ([#14](https://github.com/fluencelabs/fluence-network-exporter/issues/14)) ([c74f3ea](https://github.com/fluencelabs/fluence-network-exporter/commit/c74f3ea472ea59c4319ef51e9cb3b29de5d12103))
+
 ## [2.0.2](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.0.1...v2.0.2) (2024-08-27)
 
 
