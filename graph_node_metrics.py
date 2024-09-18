@@ -24,6 +24,26 @@ def connect_graph_node(graph_node_url):
         raise
 
 
+def get_latest_block(client):
+    """Get latest block number"""
+    try:
+        query = gql('''
+        query {
+            _meta {
+                block {
+                    number
+                }
+            }
+        }
+        ''')
+        response = client.execute(query)
+        block = response['_meta']['block']['number']
+        FLUENCE_SUBGRAPH_LATEST_BLOCK.set(block)
+    except Exception as e:
+        logger.error(f"Error fetching latest block number: {e}")
+        raise
+
+
 def get_providers(client):
     """Fetch all providers from the Graph Node."""
     try:
@@ -213,6 +233,7 @@ def collect_deal_metrics(client, provider_id, provider_name):
 
 def collect_metrics(graph_node, providers_to_monitor):
     try:
+        get_latest_block(graph_node)
         if providers_to_monitor:
             for provider_id in providers_to_monitor:
                 provider_name = get_provider_name(graph_node, provider_id)
