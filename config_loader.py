@@ -26,6 +26,7 @@ class ConfigSchema(BaseModel):
     providers: Optional[conlist(constr(min_length=1), min_length=1)] = None
     transaction: Optional[TransactionConfig] = None
     port: Optional[int] = 8001
+    diamond_address: Optional[constr(min_length=1)] = None
 
 
 def load_config(config_file_path: str) -> ConfigSchema:
