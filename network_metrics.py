@@ -122,7 +122,7 @@ def collect_balances(rpc: Web3, addresses_to_monitor: list[AddressEntry]):
             logger.debug(
                 f"Address {address} ({name}) has sufficient balance: {balance_eth} FLT")
 
-def collect_reward_balance(rpc: Web3, diamond_address: constr(min_length=1)):
+def collect_reward_balance(rpc: Web3, diamond_address: str):
     abi = '[{"type":"function","name":"getRewardBalance","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"}]'
     diamond = rpc.eth.contract(address=diamond_address, abi=abi)
     reward_balance = diamond.functions.getRewardBalance().call()
@@ -133,7 +133,7 @@ def collect_reward_balance(rpc: Web3, diamond_address: constr(min_length=1)):
 def collect_metrics(
     rpc: Web3,
     addresses_to_monitor: list[AddressEntry],
-    diamond_address: constr(min_length=1)
+    diamond_address: str
 ):
     """Collect block height and address balances"""
     try:
