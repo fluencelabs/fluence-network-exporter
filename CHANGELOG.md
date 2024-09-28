@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.1](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.2.0...v2.2.1) (2024-09-28)
+
+
+### Bug Fixes
+
+* formatting typo, some mypy errors ([#18](https://github.com/fluencelabs/fluence-network-exporter/issues/18)) ([a047c31](https://github.com/fluencelabs/fluence-network-exporter/commit/a047c311c6ff5d2b2bcfb8c3e69a4962b5e00586))
+
 ## [2.2.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.1.0...v2.2.0) (2024-09-28)
 
 
