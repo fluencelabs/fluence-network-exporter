@@ -99,35 +99,55 @@ def start_transaction_task(web3: Web3, private_key: str, interval: int):
         raise
 
 
-def collect_metrics(rpc: Web3, addresses_to_monitor: list[AddressEntry]):
+def collect_balances(rpc: Web3, addresses_to_monitor: list[AddressEntry]):
+    for entry in addresses_to_monitor:
+        address = entry.address
+        name = entry.name
+        minimum_balance = entry.minimum_balance
+
+        balance_wei = rpc.eth.get_balance(address)
+        balance_eth = rpc.from_wei(balance_wei, 'ether')
+
+        FLUENCE_BALANCE.labels(
+            address=address, name=name).set(balance_eth)
+        logger.debug(f"Address {address} ({name}) balance is: {
+                     balance_eth} FLT")
+        FLUENCE_BALANCE_MINIMUM.labels(
+            address=address, name=name).set(minimum_balance)
+
+        if balance_eth < minimum_balance:
+            logger.warning(
+                f"Address {address} ({name}) has a balance below the minimum threshold: {balance_eth} < {minimum_balance}")
+        else:
+            logger.debug(
+                f"Address {address} ({name}) has sufficient balance: {balance_eth} FLT")
+
+
+def collect_reward_balance(rpc: Web3, diamond_address: str):
+    abi = '[{"type":"function","name":"getRewardBalance","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"}]'
+    diamond = rpc.eth.contract(address=diamond_address, abi=abi)
+    reward_balance = diamond.functions.getRewardBalance().call()
+    reward_balance_eth = rpc.from_wei(reward_balance, 'ether')
+    REWARD_BALANCE_FLT.set(reward_balance_eth)
+    logger.debug(f"Diamond {diamond_address} reward balance is {
+                 reward_balance_eth} FLT")
+
+
+def collect_metrics(
+    rpc: Web3,
+    addresses_to_monitor: list[AddressEntry],
+    diamond_address: str
+):
     """Collect block height and address balances"""
     try:
         latest_block_height = rpc.eth.block_number
         FLUENCE_BLOCK_HEIGHT.set(latest_block_height)
         logger.debug(f"Collected block height: {latest_block_height}")
-
         if addresses_to_monitor:
-            for entry in addresses_to_monitor:
-                address = entry.address
-                name = entry.name
-                minimum_balance = entry.minimum_balance
+            collect_balances(rpc, addresses_to_monitor)
+        if diamond_address:
+            collect_reward_balance(rpc, diamond_address)
 
-                balance_wei = rpc.eth.get_balance(address)
-                balance_eth = rpc.from_wei(balance_wei, 'ether')
-
-                FLUENCE_BALANCE.labels(
-                    address=address, name=name).set(balance_eth)
-                logger.debug(f"Address {address} ({name}) balance is: {balance_eth} FLT")
-                FLUENCE_BALANCE_MINIMUM.labels(
-                    address=address, name=name).set(minimum_balance)
-
-
-                if balance_eth < minimum_balance:
-                    logger.warning(
-                        f"Address {address} ({name}) has a balance below the minimum threshold: {balance_eth} < {minimum_balance}")
-                else:
-                    logger.debug(
-                        f"Address {address} ({name}) has sufficient balance: {balance_eth} FLT")
     except Exception as e:
         logger.error(f"Error collecting network metrics: {e}")
         raise
