@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.3](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.2.2...v2.2.3) (2024-09-28)
+
+
+### Bug Fixes
+
+* collect graph networks metrics ([#22](https://github.com/fluencelabs/fluence-network-exporter/issues/22)) ([1ab34bd](https://github.com/fluencelabs/fluence-network-exporter/commit/1ab34bd9ee88247e4919a54358dbe9e930990e01))
+
 ## [2.2.2](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.2.1...v2.2.2) (2024-09-28)
 
 
