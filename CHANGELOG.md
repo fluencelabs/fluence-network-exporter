@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.2](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.2.1...v2.2.2) (2024-09-28)
+
+
+### Bug Fixes
+
+* **peer-cc:** filter out deleted peers ([#20](https://github.com/fluencelabs/fluence-network-exporter/issues/20)) ([a92ea6d](https://github.com/fluencelabs/fluence-network-exporter/commit/a92ea6d0bb4b4b772d15f200880d2963a5adc87a))
+
 ## [2.2.1](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.2.0...v2.2.1) (2024-09-28)
 
 
