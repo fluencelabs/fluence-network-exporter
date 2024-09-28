@@ -32,7 +32,7 @@ def root():
 @app.route('/metrics')
 def metrics():
     try:
-        nm.collect_metrics(rpc, addresses_to_monitor)
+        nm.collect_metrics(rpc, addresses_to_monitor, diamond_address)
         gm.collect_metrics(graph_node, providers_to_monitor)
         return Response(generate_latest(registry), mimetype="text/plain")
     except Exception as e:
@@ -54,6 +54,7 @@ if __name__ == '__main__':
 
         addresses_to_monitor = config.addresses
         providers_to_monitor = config.providers
+        diamond_address = config.diamond_address
 
         rpc = nm.connect_rpc(rpc_url)
         graph_node = gm.connect_graph_node(graph_node_url)
