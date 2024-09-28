@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.1.0...v2.2.0) (2024-09-28)
+
+
+### Features
+
+* **balance:** collect rewardBalance gauge ([#16](https://github.com/fluencelabs/fluence-network-exporter/issues/16)) ([4f1f18c](https://github.com/fluencelabs/fluence-network-exporter/commit/4f1f18c446e32473c55b671c028921e26bf3b70d))
+
 ## [2.1.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.0.2...v2.1.0) (2024-09-18)
 
 
