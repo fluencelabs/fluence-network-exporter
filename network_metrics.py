@@ -110,10 +110,10 @@ def collect_balances(rpc: Web3, addresses_to_monitor: list[AddressEntry]):
 
         FLUENCE_BALANCE.labels(
             address=address, name=name).set(balance_eth)
-        logger.debug(f"Address {address} ({name}) balance is: {balance_eth} FLT")
+        logger.debug(f"Address {address} ({name}) balance is: {
+                     balance_eth} FLT")
         FLUENCE_BALANCE_MINIMUM.labels(
             address=address, name=name).set(minimum_balance)
-
 
         if balance_eth < minimum_balance:
             logger.warning(
@@ -122,13 +122,16 @@ def collect_balances(rpc: Web3, addresses_to_monitor: list[AddressEntry]):
             logger.debug(
                 f"Address {address} ({name}) has sufficient balance: {balance_eth} FLT")
 
+
 def collect_reward_balance(rpc: Web3, diamond_address: str):
     abi = '[{"type":"function","name":"getRewardBalance","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"}]'
     diamond = rpc.eth.contract(address=diamond_address, abi=abi)
     reward_balance = diamond.functions.getRewardBalance().call()
     reward_balance_eth = rpc.from_wei(reward_balance, 'ether')
     REWARD_BALANCE_FLT.set(reward_balance_eth)
-    logger.debug(f"Diamond {diamond_address} reward balance is {reward_balance_eth} FLT")
+    logger.debug(f"Diamond {diamond_address} reward balance is {
+                 reward_balance_eth} FLT")
+
 
 def collect_metrics(
     rpc: Web3,
