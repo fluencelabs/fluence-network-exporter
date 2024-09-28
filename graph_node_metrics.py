@@ -230,10 +230,65 @@ def collect_deal_metrics(client, provider_id, provider_name):
             f"Error collecting deal metrics for provider {provider_name} (ID: {provider_id}): {e}")
         raise
 
+def collect_graph_networks_metrics(client):
+    try:
+        query = gql('''
+        query {
+            graphNetworks {
+                fltPrice
+                slashingRate
+                coreEpochDuration
+                capacityMaxFailedRatio
+                usdTargetRevenuePerEpoch
+                minRequiredProofsPerEpoch
+                dealsTotal
+                proofsTotal
+                offersTotal
+                providersTotal
+                effectorsTotal
+                capacityCommitmentsTotal
+            }
+        }
+        ''')
+
+        response = client.execute(query)
+
+        graphNetwork = response['graphNetworks'][0]
+
+        fltPrice = graphNetwork['fltPrice']
+        slashingRate = graphNetwork['slashingRate']
+        coreEpochDuration = graphNetwork['coreEpochDuration']
+        capacityMaxFailedRatio = graphNetwork['capacityMaxFailedRatio']
+        usdTargetRevenuePerEpoch = graphNetwork['usdTargetRevenuePerEpoch']
+        minRequiredProofsPerEpoch = graphNetwork['minRequiredProofsPerEpoch']
+        dealsTotal = graphNetwork['dealsTotal']
+        proofsTotal = graphNetwork['proofsTotal']
+        offersTotal = graphNetwork['offersTotal']
+        providersTotal = graphNetwork['providersTotal']
+        effectorsTotal = graphNetwork['effectorsTotal']
+        commitmentCreatedCount = graphNetwork['capacityCommitmentsTotal']
+
+        FLT_PRICE.set(fltPrice)
+        SLASHING_RATE.set(slashingRate)
+        CORE_EPOCH_DURATION.set(coreEpochDuration)
+        CAPACITY_MAX_FAILED_RATIO.set(capacityMaxFailedRatio)
+        USD_TARGET_REVENUE_PER_EPOCH.set(usdTargetRevenuePerEpoch)
+        MIN_REQUIRED_PROOFS_PER_EPOCH.set(minRequiredProofsPerEpoch)
+        DEALS_TOTAL.set(dealsTotal)
+        PROOFS_TOTAL.set(proofsTotal)
+        OFFERS_TOTAL.set(offersTotal)
+        PROVIDERS_TOTAL.set(providersTotal)
+        EFFECTORS_TOTAL.set(effectorsTotal)
+        COMMITMENT_CREATED_COUNT.set(commitmentCreatedCount)
+
+    except Exception as e:
+        logger.error(f"Error collecting graph networks: {e}")
+        raise
 
 def collect_metrics(graph_node, providers_to_monitor):
     try:
         get_latest_block(graph_node)
+        collect_graph_networks_metrics(graph_node)
         if providers_to_monitor:
             for provider_id in providers_to_monitor:
                 provider_name = get_provider_name(graph_node, provider_id)
