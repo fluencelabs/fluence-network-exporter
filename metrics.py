@@ -25,3 +25,16 @@ FLUENCE_DEAL_ACTIVE_START_DATE=Gauge('fluence_network_deal_active_start_date', '
 FLUENCE_SUBGRAPH_LATEST_BLOCK = Gauge('fluence_network_subgraph_latest_block','The latest block number seen by subgraph', registry=registry)
 
 REWARD_BALANCE_FLT = Gauge('fluence_network_reward_balance', 'Amount of FLT designated to Capacity Rewards on Diamond (scaled to ether)', registry=registry)
+
+FLT_PRICE = Gauge("fluence_network_flt_price", "Price of FLT in USD", registry=registry)
+SLASHING_RATE = Gauge("fluence_network_slashing_rate", "Slashing rate in percents", registry=registry)
+CORE_EPOCH_DURATION = Gauge("fluence_network_core_epoch_duration", "Epoch Duration in seconds", registry=registry)
+CAPACITY_MAX_FAILED_RATIO = Gauge("fluence_network_capacity_max_failed_ratio", "CC maximum failed epochs", registry=registry)
+USD_TARGET_REVENUE_PER_EPOCH = Gauge("fluence_network_usd_target_revenue_per_epoch", "Target revenue per CC per epoch in non-scaled USD", registry=registry)
+MIN_REQUIRED_PROOFS_PER_EPOCH = Gauge("fluence_network_min_required_proofs_per_epoch", "Minimum proofs per CU per epoch", registry=registry)
+DEALS_TOTAL = Gauge("fluence_network_deals_total", "Total count of created deals", registry=registry)
+PROOFS_TOTAL = Gauge("fluence_network_proofs_total", "Total count of submitted proofs", registry=registry)
+OFFERS_TOTAL = Gauge("fluence_network_offers_total", "Total count of created offers", registry=registry)
+PROVIDERS_TOTAL = Gauge("fluence_network_providers_total", "Total count of providers", registry=registry)
+EFFECTORS_TOTAL = Gauge("fluence_network_effectors_total", "Total count of effectors", registry=registry)
+COMMITMENT_CREATED_COUNT = Gauge("fluence_network_commitment_created_count", "Total count of CommitmentCreated events", registry=registry)
