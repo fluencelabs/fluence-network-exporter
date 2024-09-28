@@ -101,7 +101,7 @@ def collect_peer_cc_metrics(client, provider_id, provider_name):
     try:
         query = gql(f'''
         query {{
-            peers(where: {{provider_: {{id: "{provider_id}"}}}}) {{
+            peers(where: {{deleted:false,provider_: {{id: "{provider_id}"}}}}) {{
                 id
                 computeUnitsTotal
                 computeUnitsInDeal
