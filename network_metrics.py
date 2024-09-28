@@ -110,8 +110,7 @@ def collect_balances(rpc: Web3, addresses_to_monitor: list[AddressEntry]):
 
         FLUENCE_BALANCE.labels(
             address=address, name=name).set(balance_eth)
-        logger.debug(f"Address {address} ({name}) balance is: {
-                     balance_eth} FLT")
+        logger.debug(f"Address {address} ({name}) balance is: {balance_eth} FLT")
         FLUENCE_BALANCE_MINIMUM.labels(
             address=address, name=name).set(minimum_balance)
 
@@ -129,8 +128,7 @@ def collect_reward_balance(rpc: Web3, diamond_address: str):
     reward_balance = diamond.functions.getRewardBalance().call()
     reward_balance_eth = rpc.from_wei(reward_balance, 'ether')
     REWARD_BALANCE_FLT.set(reward_balance_eth)
-    logger.debug(f"Diamond {diamond_address} reward balance is {
-                 reward_balance_eth} FLT")
+    logger.debug(f"Diamond {diamond_address} reward balance is {reward_balance_eth} FLT")
 
 
 def collect_metrics(

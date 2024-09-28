@@ -1,8 +1,8 @@
 import os
 import logging
 import sys
-from prometheus_client import generate_latest, CollectorRegistry
-from flask import Flask, Response
+from prometheus_client import generate_latest
+from flask import Flask, Response, cli
 
 import config_loader
 import metrics
@@ -16,7 +16,6 @@ logger = logging.getLogger(__name__)
 
 # Disable Flask's default logging
 logging.getLogger("werkzeug").disabled = True
-cli = sys.modules['flask.cli']
 cli.show_server_banner = lambda *x: None
 
 app = Flask(__name__)
@@ -30,7 +29,7 @@ def root():
 
 
 @app.route('/metrics')
-def metrics():
+def metrics_endpoint():
     try:
         nm.collect_metrics(rpc, addresses_to_monitor, diamond_address)
         gm.collect_metrics(graph_node, providers_to_monitor)
@@ -50,7 +49,7 @@ if __name__ == '__main__':
 
         rpc_url = config.rpc_url
         graph_node_url = config.graph_node_url
-        port = int(os.getenv("PORT", config.port))
+        port = int(os.getenv("PORT", str(config.port)))
 
         addresses_to_monitor = config.addresses
         providers_to_monitor = config.providers

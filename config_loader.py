@@ -1,6 +1,6 @@
 import yaml
 from pydantic import BaseModel, ValidationError, constr, conlist, condecimal
-from typing import List, Optional
+from typing import Optional
 import pathlib
 import logging
 
@@ -16,7 +16,7 @@ class AddressEntry(BaseModel):
 class TransactionConfig(BaseModel):
     enabled: bool
     private_key_path: Optional[str] = None
-    interval: Optional[str] = "60s"
+    interval: str = "60s"
 
 
 class ConfigSchema(BaseModel):
