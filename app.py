@@ -8,6 +8,7 @@ import config_loader
 import metrics
 import network_metrics as nm
 import graph_node_metrics as gm
+import graph_node_nft_metrics as nftm
 
 # Setup logging
 LOG_FORMAT = '%(asctime)s %(levelname)s %(message)s'
@@ -33,6 +34,7 @@ def metrics_endpoint():
     try:
         nm.collect_metrics(rpc, addresses_to_monitor, diamond_address)
         gm.collect_metrics(graph_node, providers_to_monitor)
+        nftm.collect_metrics(graph_node_nft)
         return Response(generate_latest(registry), mimetype="text/plain")
     except Exception as e:
         logger.error(f"Error collecting metrics: {e}")
@@ -49,6 +51,7 @@ if __name__ == '__main__':
 
         rpc_url = config.rpc_url
         graph_node_url = config.graph_node_url
+        graph_node_nft_url = config.graph_node_nft_url
         port = int(os.getenv("PORT", str(config.port)))
 
         addresses_to_monitor = config.addresses
@@ -57,6 +60,7 @@ if __name__ == '__main__':
 
         rpc = nm.connect_rpc(rpc_url)
         graph_node = gm.connect_graph_node(graph_node_url)
+        graph_node_nft = nftm.connect_graph_node(graph_node_nft_url)
 
         if config.transaction and config.transaction.enabled:
             private_key = os.getenv("PRIVATE_KEY") or config_loader.load_private_key(
