@@ -74,8 +74,8 @@ def collect_metrics(graph_node):
         tokens = response['tokens']
         floor_price = None
         for token in tokens:
-            if token['price'] < floor_price or floor_price is None:
-                floor_price = token['price']
+            if floor_price is None or int(token['price']) < floor_price:
+                floor_price = int(token['price'])
         NFTS_FLOOR_PRICE.set(floor_price)
 
     except Exception as e:
