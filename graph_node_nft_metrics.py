@@ -61,6 +61,23 @@ def collect_metrics(graph_node):
         NFTS_TOKENS_ON_SALE.set(nfts['tokensOnSale'])
         NFTS_TOTAL_SOLD.set(nfts['totalSold'])
         NFTS_TOTAL_VOLUME.set(nfts['totalVolume'])
+
+        # getting floor price - the minimal price of a token
+        tokensQuery = gql(f'''
+        query {{
+            tokens(where: {{price_not: null}}) {{
+                price
+            }}
+        }}
+        ''')
+        response = graph_node.execute(tokensQuery)
+        tokens = response['tokens']
+        floor_price = None
+        for token in tokens:
+            if token['price'] < floor_price or floor_price is None:
+                floor_price = token['price']
+        NFTS_FLOOR_PRICE.set(floor_price)
+
     except Exception as e:
         logger.error(f"Error in collecting NFT metrics from graph-node: {e}")
         raise ()
