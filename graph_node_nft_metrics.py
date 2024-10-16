@@ -72,9 +72,9 @@ def collect_metrics(graph_node):
         ''')
         response = graph_node.execute(tokensQuery)
         tokens = response['tokens']
-        floor_price = None
+        floor_price = 0
         for token in tokens:
-            if floor_price is None or int(token['price']) < floor_price:
+            if int(token['price']) > 0 and (floor_price == 0 or int(token['price']) < floor_price):
                 floor_price = int(token['price'])
         NFTS_FLOOR_PRICE.set(floor_price)
 
