@@ -24,7 +24,7 @@ def connect_graph_node(graph_node_url):
 
 
 def get_latest_block(client):
-    """Get latest block number"""
+    """Get latest block number in NFT subgraph."""
     try:
         query = gql('''
         query {
@@ -37,13 +37,14 @@ def get_latest_block(client):
         ''')
         response = client.execute(query)
         block = response['_meta']['block']['number']
-        FLUENCE_SUBGRAPH_LATEST_BLOCK.set(block)
+        FLUENCE_NFT_SUBGRAPH_LATEST_BLOCK.set(block)
     except Exception as e:
         logger.error(f"Error fetching latest block number: {e}")
         raise
 
 def collect_metrics(graph_node):
     try:
+        get_latest_block(graph_node)
         query = gql(f'''
         query {{
             marketplace(id:"Marketplace") {{
@@ -51,6 +52,9 @@ def collect_metrics(graph_node):
                 tokensOnSale
                 totalSold
                 totalVolume
+            }}
+            tokens(where: {{price_not: null}}, orderBy: price, orderDirection: asc, first: 1) {{
+                price
             }}
         }}
         ''')
@@ -63,19 +67,8 @@ def collect_metrics(graph_node):
         NFTS_TOTAL_VOLUME.set(nfts['totalVolume'])
 
         # getting floor price - the minimal price of a token
-        tokensQuery = gql(f'''
-        query {{
-            tokens(where: {{price_not: null}}) {{
-                price
-            }}
-        }}
-        ''')
-        response = graph_node.execute(tokensQuery)
         tokens = response['tokens']
-        floor_price = 0
-        for token in tokens:
-            if int(token['price']) > 0 and (floor_price == 0 or int(token['price']) < floor_price):
-                floor_price = int(token['price'])
+        floor_price = tokens[0]['price']
         NFTS_FLOOR_PRICE.set(floor_price)
 
     except Exception as e:

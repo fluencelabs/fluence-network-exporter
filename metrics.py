@@ -39,6 +39,7 @@ PROVIDERS_TOTAL = Gauge("fluence_network_providers_total", "Total count of provi
 EFFECTORS_TOTAL = Gauge("fluence_network_effectors_total", "Total count of effectors", registry=registry)
 COMMITMENT_CREATED_COUNT = Gauge("fluence_network_commitment_created_count", "Total count of CommitmentCreated events", registry=registry)
 
+FLUENCE_NFT_SUBGRAPH_LATEST_BLOCK = Gauge('fluence_network_nft_subgraph_latest_block','The latest block number seen by subgraph for NFT', registry=registry)
 NFTS_TOKENS_TOTAL = Gauge("fluence_network_nfts_tokens_total", "Total count of NFTs", registry=registry)
 NFTS_TOKENS_ON_SALE = Gauge("fluence_network_nfts_tokens_on_sale", "Total count of NFTs for sale", registry=registry)
 NFTS_TOTAL_SOLD = Gauge("fluence_network_nfts_total_sold", "Total count of NFTs sold", registry=registry)
