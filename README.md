@@ -11,7 +11,7 @@
 ```yml
 rpc_url: "https://rpc.testnet.fluence.dev"
 graph_node_url: 'https://graph-node.stage.fluence.dev/subgraphs/name/fluence-deal-contracts-3d15b6b4'
-graph_node_nft_url: 'https://graph-node.kras.fluence.dev/subgraphs/name/fluence-nft-marketplace-57b8e5b'
+graph_node_nft_url: 'https://subgraph.mainnet.fluence.dev/subgraphs/name/fluence-nft-marketplace-57b8e5b'
 
 addresses:
   - address: "0x9262768725134b7d52041FAb42287EA2147D0c77"
