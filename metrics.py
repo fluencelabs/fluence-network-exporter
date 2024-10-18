@@ -1,4 +1,4 @@
-from prometheus_client import Gauge, CollectorRegistry
+from prometheus_client import Gauge, CollectorRegistry, Info
 import config_loader
 import os
 
@@ -27,6 +27,13 @@ FLUENCE_SUBGRAPH_LATEST_BLOCK = Gauge('fluence_network_subgraph_latest_block','T
 REWARD_BALANCE_FLT = Gauge('fluence_network_reward_balance', 'Amount of FLT designated to Capacity Rewards on Diamond (scaled to ether)', registry=registry)
 
 FLT_PRICE = Gauge("fluence_network_flt_price", "Price of FLT in USD", registry=registry)
+USD_COLLATERAL_PER_UNIT = Gauge("fluence_network_usd_collateral_per_unit", "USD collateral per compute unit", registry=registry)
+MIN_REWARD_PER_EPOCH = Gauge("fluence_network_min_reward_per_epoch", "Min reward per epoch", registry=registry)
+MAX_REWARD_PER_EPOCH = Gauge("fluence_network_max_reward_per_epoch", "Max reward per epoch", registry=registry)
+VESTING_PERIOD_DURATION = Gauge("fluence_network_vesting_period_duration", "Vesting period duration", registry=registry)
+VESTING_PERIOD_COUNT = Gauge("fluence_network_vesting_period_count", "Vesting period count", registry=registry)
+MAX_PROOFS_PER_EPOCH = Gauge("fluence_network_max_proofs_per_epoch", "Maximum proofs per epoch", registry=registry)
+WITHDRAW_EPOCHS_AFTER_FAILED = Gauge("fluence_network_withdraw_epochs_after_failed", "Withdraw epochs after failed", registry=registry)
 SLASHING_RATE = Gauge("fluence_network_slashing_rate", "Slashing rate in percents", registry=registry)
 CORE_EPOCH_DURATION = Gauge("fluence_network_core_epoch_duration", "Epoch Duration in seconds", registry=registry)
 CAPACITY_MAX_FAILED_RATIO = Gauge("fluence_network_capacity_max_failed_ratio", "CC maximum failed epochs", registry=registry)
@@ -39,6 +46,7 @@ PROVIDERS_TOTAL = Gauge("fluence_network_providers_total", "Total count of provi
 EFFECTORS_TOTAL = Gauge("fluence_network_effectors_total", "Total count of effectors", registry=registry)
 COMMITMENT_CREATED_COUNT = Gauge("fluence_network_commitment_created_count", "Total count of CommitmentCreated events", registry=registry)
 
+INFO = Info("fluence_network_info", "Info about network", registry=registry)
 FLUENCE_NFT_SUBGRAPH_LATEST_BLOCK = Gauge('fluence_network_nft_subgraph_latest_block','The latest block number seen by subgraph for NFT', registry=registry)
 NFTS_TOKENS_TOTAL = Gauge("fluence_network_nfts_tokens_total", "Total count of NFTs", registry=registry)
 NFTS_TOKENS_ON_SALE = Gauge("fluence_network_nfts_tokens_on_sale", "Total count of NFTs for sale", registry=registry)

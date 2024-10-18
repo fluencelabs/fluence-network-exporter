@@ -247,6 +247,14 @@ def collect_graph_networks_metrics(client):
                 providersTotal
                 effectorsTotal
                 capacityCommitmentsTotal
+                usdCollateralPerUnit
+                minRewardPerEpoch
+                maxRewardPerEpoch
+                vestingPeriodDuration
+                vestingPeriodCount
+                maxProofsPerEpoch
+                withdrawEpochsAfterFailed
+                difficulty
             }
         }
         ''')
@@ -267,6 +275,14 @@ def collect_graph_networks_metrics(client):
         providersTotal = graphNetwork['providersTotal']
         effectorsTotal = graphNetwork['effectorsTotal']
         commitmentCreatedCount = graphNetwork['capacityCommitmentsTotal']
+        usdCollateralPerUnit = graphNetwork['usdCollateralPerUnit']
+        minRewardPerEpoch = graphNetwork['minRewardPerEpoch']
+        maxRewardPerEpoch = graphNetwork['maxRewardPerEpoch']
+        vestingPeriodDuration = graphNetwork['vestingPeriodDuration']
+        vestingPeriodCount = graphNetwork['vestingPeriodCount']
+        maxProofsPerEpoch = graphNetwork['maxProofsPerEpoch']
+        withdrawEpochsAfterFailed = graphNetwork['withdrawEpochsAfterFailed']
+        difficulty = graphNetwork['difficulty']
 
         FLT_PRICE.set(fltPrice)
         SLASHING_RATE.set(slashingRate)
@@ -280,6 +296,14 @@ def collect_graph_networks_metrics(client):
         PROVIDERS_TOTAL.set(providersTotal)
         EFFECTORS_TOTAL.set(effectorsTotal)
         COMMITMENT_CREATED_COUNT.set(commitmentCreatedCount)
+        USD_COLLATERAL_PER_UNIT.set(usdCollateralPerUnit)
+        MIN_REWARD_PER_EPOCH.set(minRewardPerEpoch)
+        MAX_REWARD_PER_EPOCH.set(maxRewardPerEpoch)
+        VESTING_PERIOD_DURATION.set(vestingPeriodDuration)
+        VESTING_PERIOD_COUNT.set(vestingPeriodCount)
+        MAX_PROOFS_PER_EPOCH.set(maxProofsPerEpoch)
+        WITHDRAW_EPOCHS_AFTER_FAILED.set(withdrawEpochsAfterFailed)
+        INFO.info({'name': 'difficulty', 'difficulty': difficulty})
 
     except Exception as e:
         logger.error(f"Error collecting graph networks: {e}")
