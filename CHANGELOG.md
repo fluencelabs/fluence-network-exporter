@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.2.3...v2.3.0) (2024-10-18)
+
+
+### Features
+
+* **nft marketplace:** basic metrics ([#24](https://github.com/fluencelabs/fluence-network-exporter/issues/24)) ([80c593b](https://github.com/fluencelabs/fluence-network-exporter/commit/80c593bd90798372b1d5872c21df7f6c94f99184))
+
 ## [2.2.3](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.2.2...v2.2.3) (2024-09-28)
 
 
