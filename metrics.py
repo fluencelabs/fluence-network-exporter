@@ -1,4 +1,4 @@
-from prometheus_client import Gauge, CollectorRegistry
+from prometheus_client import Gauge, CollectorRegistry, Info
 import config_loader
 import os
 
@@ -34,7 +34,6 @@ VESTING_PERIOD_DURATION = Gauge("fluence_network_vesting_period_duration", "Vest
 VESTING_PERIOD_COUNT = Gauge("fluence_network_vesting_period_count", "Vesting period count", registry=registry)
 MAX_PROOFS_PER_EPOCH = Gauge("fluence_network_max_proofs_per_epoch", "Maximum proofs per epoch", registry=registry)
 WITHDRAW_EPOCHS_AFTER_FAILED = Gauge("fluence_network_withdraw_epochs_after_failed", "Withdraw epochs after failed", registry=registry)
-DIFFICULTY = Gauge("fluence_network_difficulty", "Difficulty in HEX", registry=registry)
 SLASHING_RATE = Gauge("fluence_network_slashing_rate", "Slashing rate in percents", registry=registry)
 CORE_EPOCH_DURATION = Gauge("fluence_network_core_epoch_duration", "Epoch Duration in seconds", registry=registry)
 CAPACITY_MAX_FAILED_RATIO = Gauge("fluence_network_capacity_max_failed_ratio", "CC maximum failed epochs", registry=registry)
@@ -46,3 +45,5 @@ OFFERS_TOTAL = Gauge("fluence_network_offers_total", "Total count of created off
 PROVIDERS_TOTAL = Gauge("fluence_network_providers_total", "Total count of providers", registry=registry)
 EFFECTORS_TOTAL = Gauge("fluence_network_effectors_total", "Total count of effectors", registry=registry)
 COMMITMENT_CREATED_COUNT = Gauge("fluence_network_commitment_created_count", "Total count of CommitmentCreated events", registry=registry)
+
+INFO = Info("fluence_network_info", "Info about network")

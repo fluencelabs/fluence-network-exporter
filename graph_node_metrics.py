@@ -303,7 +303,7 @@ def collect_graph_networks_metrics(client):
         VESTING_PERIOD_COUNT.set(vestingPeriodCount)
         MAX_PROOFS_PER_EPOCH.set(maxProofsPerEpoch)
         WITHDRAW_EPOCHS_AFTER_FAILED.set(withdrawEpochsAfterFailed)
-        DIFFICULTY.set(difficulty)
+        INFO.info({'name': 'difficulty', 'difficulty': difficulty})
 
     except Exception as e:
         logger.error(f"Error collecting graph networks: {e}")
