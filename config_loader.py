@@ -22,6 +22,7 @@ class TransactionConfig(BaseModel):
 class ConfigSchema(BaseModel):
     rpc_url: constr(min_length=1)
     graph_node_url: Optional[constr(min_length=1)] = None
+    graph_node_nft_url: Optional[constr(min_length=1)] = None
     addresses: Optional[conlist(AddressEntry, min_length=1)] = None
     providers: Optional[conlist(constr(min_length=1), min_length=1)] = None
     transaction: Optional[TransactionConfig] = None
