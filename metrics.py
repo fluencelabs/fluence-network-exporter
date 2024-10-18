@@ -46,4 +46,4 @@ PROVIDERS_TOTAL = Gauge("fluence_network_providers_total", "Total count of provi
 EFFECTORS_TOTAL = Gauge("fluence_network_effectors_total", "Total count of effectors", registry=registry)
 COMMITMENT_CREATED_COUNT = Gauge("fluence_network_commitment_created_count", "Total count of CommitmentCreated events", registry=registry)
 
-INFO = Info("fluence_network_info", "Info about network")
+INFO = Info("fluence_network_info", "Info about network", registry=registry)
