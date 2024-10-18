@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.3.0...v2.4.0) (2024-10-18)
+
+
+### Features
+
+* Add constants from chain to metrics ([#26](https://github.com/fluencelabs/fluence-network-exporter/issues/26)) ([81d778a](https://github.com/fluencelabs/fluence-network-exporter/commit/81d778a03b88d1fd7d337cae3a869f0a9713251d))
+
 ## [2.3.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.2.3...v2.3.0) (2024-10-18)
 
 
