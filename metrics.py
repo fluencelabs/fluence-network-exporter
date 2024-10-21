@@ -53,3 +53,4 @@ NFTS_TOKENS_ON_SALE = Gauge("fluence_network_nfts_tokens_on_sale", "Total count 
 NFTS_TOTAL_SOLD = Gauge("fluence_network_nfts_total_sold", "Total count of NFTs sold", registry=registry)
 NFTS_TOTAL_VOLUME = Gauge("fluence_network_nfts_total_volume", "Total volume of NFTs", registry=registry)
 NFTS_FLOOR_PRICE = Gauge("fluence_network_nfts_floor_price", "Floor price of NFTs", registry=registry)
+NFT_HOLDERS_TOTAL = Gauge("fluence_network_nft_holders_total", "Total count of NFT holders", registry=registry)

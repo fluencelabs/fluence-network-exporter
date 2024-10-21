@@ -45,18 +45,21 @@ def get_latest_block(client):
 def collect_metrics(graph_node):
     try:
         get_latest_block(graph_node)
-        query = gql(f'''
-        query {{
-            marketplace(id:"Marketplace") {{
+        query = gql('''
+        query {
+            marketplace(id:"Marketplace") {
                 tokensTotal
                 tokensOnSale
                 totalSold
                 totalVolume
-            }}
-            tokens(where: {{price_not: null}}, orderBy: price, orderDirection: asc, first: 1) {{
+            }
+            tokens(where: {price_not: null}, orderBy: price, orderDirection: asc, first: 1) {
                 price
-            }}
-        }}
+            }
+            accounts(where: {tokensTotal_gt: "0"}) {
+                id
+            }
+        }
         ''')
 
         response = graph_node.execute(query)
@@ -70,6 +73,9 @@ def collect_metrics(graph_node):
         tokens = response['tokens']
         floor_price = tokens[0]['price']
         NFTS_FLOOR_PRICE.set(floor_price)
+
+        holders = response['accounts']
+        NFT_HOLDERS_TOTAL.set(len(holders))
 
     except Exception as e:
         logger.error(f"Error in collecting NFT metrics from graph-node: {e}")
