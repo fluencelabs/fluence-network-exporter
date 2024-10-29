@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.5.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.4.0...v2.5.0) (2024-10-29)
+
+
+### Features
+
+* **nft:** total nft holders ([#28](https://github.com/fluencelabs/fluence-network-exporter/issues/28)) ([6505703](https://github.com/fluencelabs/fluence-network-exporter/commit/65057030522902eb6e28b25a0e562741e9ea9447))
+
+
+### Bug Fixes
+
+* rename providersTotal to providersRegisteredTotal ([#30](https://github.com/fluencelabs/fluence-network-exporter/issues/30)) ([aa6770e](https://github.com/fluencelabs/fluence-network-exporter/commit/aa6770eb3f9d92ac659a6c6554fcd6848de9aa56))
+
 ## [2.4.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.3.0...v2.4.0) (2024-10-18)
 
 
