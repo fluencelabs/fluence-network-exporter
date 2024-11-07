@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.5.0...v2.6.0) (2024-11-07)
+
+
+### Features
+
+* Add approved providers ([#31](https://github.com/fluencelabs/fluence-network-exporter/issues/31)) ([b4172e4](https://github.com/fluencelabs/fluence-network-exporter/commit/b4172e45e1b136a38b250e3c9c996c85634f40f7))
+
 ## [2.5.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.4.0...v2.5.0) (2024-10-29)
 
 
