@@ -316,18 +316,22 @@ def collect_active_peers_count(client):
     try:
         query = gql('''
         query {
-            providers(where:{approved:true}) {
-                peers(where:{currentCapacityCommitment_:{status:Active}}) {
-                    computeUnitsTotal
-                }
-              }
+            active_peers:peers(where: {and: [{currentCapacityCommitment_:{status:Active}}, {provider_: {approved: true}}]}) {
+                computeUnitsTotal
+            },
+            peers_total:peers(where: {and: [{provider_: {approved: true}}]}) {
+                computeUnitsTotal
+            }
         }
         ''')
 
         response = client.execute(query)
-        providers = response['providers']
-        active_peers = sum(map(lambda p: len(p['peers']), providers))
-        ACTIVE_PEERS.set(active_peers)
+        active_peers = response['active_peers']
+        peers_total = response['peers_total']
+        active_peers_count = len(active_peers)
+        peers_total_count = len(peers_total)
+        ACTIVE_PEERS.set(active_peers_count)
+        PEERS_TOTAL.set(peers_total_count)
     except Exception as e:
         logger.error(f"Error in collecting active peers count metrics from graph-node: {e}")
         raise ()
