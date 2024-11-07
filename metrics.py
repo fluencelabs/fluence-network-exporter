@@ -47,6 +47,8 @@ APPROVED_PROVIDERS = Gauge("fluence_network_approved_providers_total", "Total co
 EFFECTORS_TOTAL = Gauge("fluence_network_effectors_total", "Total count of effectors", registry=registry)
 COMMITMENT_CREATED_COUNT = Gauge("fluence_network_commitment_created_count", "Total count of CommitmentCreated events", registry=registry)
 
+ACTIVE_PEERS = Gauge("fluence_active_peers_count", "Total peers in active CCs", registry=registry)
+
 INFO = Info("fluence_network_info", "Info about network", registry=registry)
 FLUENCE_NFT_SUBGRAPH_LATEST_BLOCK = Gauge('fluence_network_nft_subgraph_latest_block','The latest block number seen by subgraph for NFT', registry=registry)
 NFTS_TOKENS_TOTAL = Gauge("fluence_network_nfts_tokens_total", "Total count of NFTs", registry=registry)
