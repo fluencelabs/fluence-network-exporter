@@ -245,6 +245,7 @@ def collect_graph_networks_metrics(client):
                 proofsTotal
                 offersTotal
                 providersRegisteredTotal
+                approvedProviders
                 effectorsTotal
                 capacityCommitmentsTotal
                 usdCollateralPerUnit
@@ -273,6 +274,7 @@ def collect_graph_networks_metrics(client):
         proofsTotal = graphNetwork['proofsTotal']
         offersTotal = graphNetwork['offersTotal']
         providersRegisteredTotal = graphNetwork['providersRegisteredTotal']
+        approvedProviders = graphNetwork['approvedProviders']
         effectorsTotal = graphNetwork['effectorsTotal']
         commitmentCreatedCount = graphNetwork['capacityCommitmentsTotal']
         usdCollateralPerUnit = graphNetwork['usdCollateralPerUnit']
@@ -294,6 +296,7 @@ def collect_graph_networks_metrics(client):
         PROOFS_TOTAL.set(proofsTotal)
         OFFERS_TOTAL.set(offersTotal)
         PROVIDERS_TOTAL.set(providersRegisteredTotal)
+        APPROVED_PROVIDERS.set(approvedProviders)
         EFFECTORS_TOTAL.set(effectorsTotal)
         COMMITMENT_CREATED_COUNT.set(commitmentCreatedCount)
         USD_COLLATERAL_PER_UNIT.set(usdCollateralPerUnit)

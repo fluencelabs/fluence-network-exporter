@@ -43,6 +43,7 @@ DEALS_TOTAL = Gauge("fluence_network_deals_total", "Total count of created deals
 PROOFS_TOTAL = Gauge("fluence_network_proofs_total", "Total count of submitted proofs", registry=registry)
 OFFERS_TOTAL = Gauge("fluence_network_offers_total", "Total count of created offers", registry=registry)
 PROVIDERS_TOTAL = Gauge("fluence_network_providers_total", "Total count of providers", registry=registry)
+APPROVED_PROVIDERS = Gauge("fluence_network_approved_providers_total", "Total count of approved providers", registry=registry)
 EFFECTORS_TOTAL = Gauge("fluence_network_effectors_total", "Total count of effectors", registry=registry)
 COMMITMENT_CREATED_COUNT = Gauge("fluence_network_commitment_created_count", "Total count of CommitmentCreated events", registry=registry)
 
