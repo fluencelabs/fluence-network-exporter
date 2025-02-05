@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.0.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.5.0...v3.0.0) (2025-02-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove nft metrics collection ([#34](https://github.com/fluencelabs/fluence-network-exporter/issues/34))
+
+### Features
+
+* Add approved providers ([#31](https://github.com/fluencelabs/fluence-network-exporter/issues/31)) ([b4172e4](https://github.com/fluencelabs/fluence-network-exporter/commit/b4172e45e1b136a38b250e3c9c996c85634f40f7))
+* Remove nft metrics collection ([#34](https://github.com/fluencelabs/fluence-network-exporter/issues/34)) ([abd3d1c](https://github.com/fluencelabs/fluence-network-exporter/commit/abd3d1c6e57317827312ab257a8c773392112d4b))
+
 ## [2.5.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v2.4.0...v2.5.0) (2024-10-29)
 
 
