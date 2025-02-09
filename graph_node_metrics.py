@@ -312,9 +312,34 @@ def collect_graph_networks_metrics(client):
         logger.error(f"Error collecting graph networks: {e}")
         raise
 
+def collect_active_peers_count(client):
+    try:
+        query = gql('''
+        query {
+            active_peers:peers(where: {and: [{currentCapacityCommitment_:{status:Active}}, {provider_: {approved: true}}]}) {
+                computeUnitsTotal
+            },
+            peers_total:peers(where: {and: [{provider_: {approved: true}}]}) {
+                computeUnitsTotal
+            }
+        }
+        ''')
+
+        response = client.execute(query)
+        active_peers = response['active_peers']
+        peers_total = response['peers_total']
+        active_peers_count = len(active_peers)
+        peers_total_count = len(peers_total)
+        ACTIVE_PEERS.set(active_peers_count)
+        PEERS_TOTAL.set(peers_total_count)
+    except Exception as e:
+        logger.error(f"Error in collecting active peers count metrics from graph-node: {e}")
+        raise ()
+
 def collect_metrics(graph_node, providers_to_monitor):
     try:
         get_latest_block(graph_node)
+        collect_active_peers_count(graph_node)
         collect_graph_networks_metrics(graph_node)
         if providers_to_monitor:
             for provider_id in providers_to_monitor:

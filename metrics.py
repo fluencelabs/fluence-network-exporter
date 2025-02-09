@@ -47,4 +47,7 @@ APPROVED_PROVIDERS = Gauge("fluence_network_approved_providers_total", "Total co
 EFFECTORS_TOTAL = Gauge("fluence_network_effectors_total", "Total count of effectors", registry=registry)
 COMMITMENT_CREATED_COUNT = Gauge("fluence_network_commitment_created_count", "Total count of CommitmentCreated events", registry=registry)
 
+ACTIVE_PEERS = Gauge("fluence_active_peers_count", "Total count of peers in active CCs", registry=registry)
+PEERS_TOTAL = Gauge("fluence_peers_total_count", "Total count of peers", registry=registry)
+
 INFO = Info("fluence_network_info", "Info about network", registry=registry)
