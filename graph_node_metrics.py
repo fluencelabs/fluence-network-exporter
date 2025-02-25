@@ -230,6 +230,38 @@ def collect_deal_metrics(client, provider_id, provider_name):
             f"Error collecting deal metrics for provider {provider_name} (ID: {provider_id}): {e}")
         raise
 
+def collect_active_capacity_commitments_stats(client, provider_id, provider_name):
+    try:
+        query = gql(f'''
+        query {{
+            capacityCommitments(where:{{ and: [{{status: Active}}, {{provider_: {{id: "{provider_id}"}}}}]}}) {{
+                id
+                status
+                totalFailCount
+                submittedProofsCount
+            }}
+        }}
+        ''')
+        response = client.execute(query)
+        capacity_commitments = response['capacityCommitments']
+
+        for cc in capacity_commitments:
+            cc_id = cc['id']
+            totalFailCount = cc['totalFailCount']
+            submittedProofsCount = cc['submittedProofsCount']
+
+            COMMITMENT_TOTAL_FAILED_CUS.labels(
+                cc_id=cc_id,
+                provider_id=provider_id,
+                provider_name=provider_name).set(totalFailCount)
+            COMMITMENT_SUBMITTED_PROOFS.labels(
+                cc_id=cc_id,
+                provider_id=provider_id,
+                provider_name=provider_name).set(submittedProofsCount)
+    except Exception as e:
+        logger.error(f"Error collecting active capacity commitments: {e}")
+        raise
+
 def collect_graph_networks_metrics(client):
     try:
         query = gql('''
@@ -326,6 +358,8 @@ def collect_metrics(graph_node, providers_to_monitor):
                     collect_peer_to_deal_metrics(
                         graph_node, provider_id, provider_name)
                     collect_deal_metrics(
+                        graph_node, provider_id, provider_name)
+                    collect_active_capacity_commitments_stats(
                         graph_node, provider_id, provider_name)
                 else:
                     logger.error(
