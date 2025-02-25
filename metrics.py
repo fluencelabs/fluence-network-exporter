@@ -46,7 +46,7 @@ PROVIDERS_TOTAL = Gauge("fluence_network_providers_total", "Total count of provi
 APPROVED_PROVIDERS = Gauge("fluence_network_approved_providers_total", "Total count of approved providers", registry=registry)
 EFFECTORS_TOTAL = Gauge("fluence_network_effectors_total", "Total count of effectors", registry=registry)
 COMMITMENT_CREATED_COUNT = Gauge("fluence_network_commitment_created_count", "Total count of CommitmentCreated events", registry=registry)
-COMMITMENT_TOTAL_FAILED_PROOFS = Gauge("fluence_network_cc_total_failed_proofs", "Total count of failed proofs",['cc_id','provider_id','provider_name'], registry=registry)
+COMMITMENT_TOTAL_FAILED_CUS = Gauge("fluence_network_cc_total_failed_cus", "Total count of failed CU",['cc_id','provider_id','provider_name'], registry=registry)
 COMMITMENT_SUBMITTED_PROOFS = Gauge("fluence_network_cc_submitted_proofs", "Total count of submitted proofs", ['cc_id','provider_id','provider_name'], registry=registry)
 
 INFO = Info("fluence_network_info", "Info about network", registry=registry)

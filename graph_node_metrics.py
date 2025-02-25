@@ -250,7 +250,7 @@ def collect_active_capacity_commitments_stats(client, provider_id, provider_name
             totalFailCount = cc['totalFailCount']
             submittedProofsCount = cc['submittedProofsCount']
 
-            COMMITMENT_TOTAL_FAILED_PROOFS.labels(
+            COMMITMENT_TOTAL_FAILED_CUS.labels(
                 cc_id=cc_id,
                 provider_id=provider_id,
                 provider_name=provider_name).set(totalFailCount)
