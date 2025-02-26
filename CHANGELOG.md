@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v3.1.0...v3.2.0) (2025-02-26)
+
+
+### Features
+
+* current epoch proof stats ([#37](https://github.com/fluencelabs/fluence-network-exporter/issues/37)) ([27e1c9c](https://github.com/fluencelabs/fluence-network-exporter/commit/27e1c9c94b7a2b73b41f6e6688114dc2cfbe2325))
+
 ## [3.1.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v3.0.0...v3.1.0) (2025-02-25)
 
 
