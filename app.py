@@ -32,7 +32,7 @@ def root():
 def metrics_endpoint():
     try:
         nm.collect_metrics(rpc, addresses_to_monitor, diamond_address)
-        gm.collect_metrics(graph_node, providers_to_monitor)
+        gm.collect_metrics(graph_node)
         return Response(generate_latest(registry), mimetype="text/plain")
     except Exception as e:
         logger.error(f"Error collecting metrics: {e}")
@@ -52,7 +52,6 @@ if __name__ == '__main__':
         port = int(os.getenv("PORT", str(config.port)))
 
         addresses_to_monitor = config.addresses
-        providers_to_monitor = config.providers
         diamond_address = config.diamond_address
 
         rpc = nm.connect_rpc(rpc_url)

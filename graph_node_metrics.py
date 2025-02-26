@@ -1,3 +1,5 @@
+import time
+
 from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
 from metrics import *
@@ -43,16 +45,36 @@ def get_latest_block(client):
         logger.error(f"Error fetching latest block number: {e}")
         raise
 
+def get_current_epoch(client):
+    """Get current epoch info"""
+    try:
+        query = gql('''
+        query  {
+          epochStatistics(first: 1, orderBy: startTimestamp, orderDirection: desc) {
+            id
+            startBlock
+            startTimestamp
+          }
+        }
+        ''')
+        response = client.execute(query)
+        epochs = response.get('epochStatistics', [])
+        if epochs:
+            return epochs[0]
+        return None
+    except Exception as e:
+        logger.error(f"Error fetching current epoch: {e}")
+        raise
 
-def get_providers(client):
+def get_approved_providers(client):
     """Fetch all providers from the Graph Node."""
     try:
         query = gql('''
         query {
-            providers {
-                id
-                name
-            }
+          providers(where: {approved: true}) {
+            id
+            name
+          }
         }
         ''')
         response = client.execute(query)
@@ -93,6 +115,42 @@ def get_provider_name(client, provider_id):
         return None
     except Exception as e:
         logger.error(f"Error fetching provider name for ID {provider_id}: {e}")
+        raise
+
+def get_network_info(client):
+    try:
+        query = gql('''
+     query {
+         graphNetworks {
+             fltPrice
+             slashingRate
+             coreEpochDuration
+             capacityMaxFailedRatio
+             usdTargetRevenuePerEpoch
+             minRequiredProofsPerEpoch
+             dealsTotal
+             proofsTotal
+             offersTotal
+             providersRegisteredTotal
+             approvedProviders
+             effectorsTotal
+             capacityCommitmentsTotal
+             usdCollateralPerUnit
+             minRewardPerEpoch
+             maxRewardPerEpoch
+             vestingPeriodDuration
+             vestingPeriodCount
+             maxProofsPerEpoch
+             withdrawEpochsAfterFailed
+             difficulty
+          }
+     }
+     ''')
+
+        response = client.execute(query)
+        return response
+    except Exception as e:
+        logger.error(f"Failed to connect to Graph Node: {e}")
         raise
 
 
@@ -231,6 +289,7 @@ def collect_deal_metrics(client, provider_id, provider_name):
         raise
 
 def collect_active_capacity_commitments_stats(client, provider_id, provider_name):
+    """Collect stats for active capacity commitments."""
     try:
         query = gql(f'''
         query {{
@@ -262,38 +321,72 @@ def collect_active_capacity_commitments_stats(client, provider_id, provider_name
         logger.error(f"Error collecting active capacity commitments: {e}")
         raise
 
+def collect_current_epoch_proof_stats(client, providers):
+    """Collect proof stats for the current epoch."""
+    try:
+        current_epoch = get_current_epoch(client)
+        network_info = get_network_info(client)
+        if current_epoch and network_info:
+            epoch_id = current_epoch['id']
+            max_proofs = int(network_info['graphNetworks'][0]['maxProofsPerEpoch'])
+            min_proofs = int(network_info['graphNetworks'][0]['minRequiredProofsPerEpoch'])
+            epoch_duration = int(network_info['graphNetworks'][0]['coreEpochDuration'])
+            time_from_epoch_start = int(time.time()) - int(current_epoch['startTimestamp'])
+
+            query = gql(f'''
+            query  {{
+              capacityCommitmentStatsPerEpoches(where: {{epoch: "{epoch_id}"}}) {{
+                submittedProofsCount
+                totalFailCount
+                id
+                activeUnitCount
+                capacityCommitment {{
+                  id
+                  provider {{
+                    id
+                    name
+                  }}
+                }}
+              }}
+            }}   
+            ''')
+            response = client.execute(query)
+            stats = response['capacityCommitmentStatsPerEpoches']
+            provider_ids = set([provider['id'] for provider in providers])
+
+            for stat in stats:
+                provider_id = stat['capacityCommitment']['provider']['id']
+                provider_name = stat['capacityCommitment']['provider']['name']
+                cc_id = stat['capacityCommitment']['id']
+                activeUnitCount = int(stat['activeUnitCount'])
+
+                if provider_id in provider_ids:
+                    submitted_proofs = stat['submittedProofsCount']
+                    max_projected_proofs = (activeUnitCount * max_proofs ) * (time_from_epoch_start / epoch_duration)
+                    min_projected_proofs = (activeUnitCount * min_proofs ) * (time_from_epoch_start / epoch_duration)
+
+                    COMMITMENT_CURRENT_EPOCH_SUBMITTED_PROOFS.labels(
+                        cc_id = cc_id,
+                        provider_id=provider_id,
+                        provider_name=provider_name).set(submitted_proofs)
+
+                    COMMITMENT_CURRENT_EPOCH_MAX_PROJECTED_PROOFS.labels(
+                        cc_id = cc_id,
+                        provider_id=provider_id,
+                        provider_name=provider_name).set(max_projected_proofs)
+
+                    COMMITMENT_CURRENT_EPOCH_MIN_PROJECTED_PROOFS.labels(
+                        cc_id = cc_id,
+                        provider_id=provider_id,
+                        provider_name=provider_name).set(min_projected_proofs)
+    except Exception as e:
+        logger.error(f"Error collecting proof stats: {e}")
+        raise
+
+
 def collect_graph_networks_metrics(client):
     try:
-        query = gql('''
-        query {
-            graphNetworks {
-                fltPrice
-                slashingRate
-                coreEpochDuration
-                capacityMaxFailedRatio
-                usdTargetRevenuePerEpoch
-                minRequiredProofsPerEpoch
-                dealsTotal
-                proofsTotal
-                offersTotal
-                providersRegisteredTotal
-                approvedProviders
-                effectorsTotal
-                capacityCommitmentsTotal
-                usdCollateralPerUnit
-                minRewardPerEpoch
-                maxRewardPerEpoch
-                vestingPeriodDuration
-                vestingPeriodCount
-                maxProofsPerEpoch
-                withdrawEpochsAfterFailed
-                difficulty
-            }
-        }
-        ''')
-
-        response = client.execute(query)
-
+        response =  get_network_info(client)
         graphNetwork = response['graphNetworks'][0]
 
         fltPrice = graphNetwork['fltPrice']
@@ -339,31 +432,30 @@ def collect_graph_networks_metrics(client):
         MAX_PROOFS_PER_EPOCH.set(maxProofsPerEpoch)
         WITHDRAW_EPOCHS_AFTER_FAILED.set(withdrawEpochsAfterFailed)
         INFO.info({'name': 'difficulty', 'difficulty': difficulty})
-
     except Exception as e:
         logger.error(f"Error collecting graph networks: {e}")
         raise
 
-def collect_metrics(graph_node, providers_to_monitor):
+def collect_metrics(graph_node):
     try:
         get_latest_block(graph_node)
         collect_graph_networks_metrics(graph_node)
-        if providers_to_monitor:
-            for provider_id in providers_to_monitor:
-                provider_name = get_provider_name(graph_node, provider_id)
 
-                if provider_name:
-                    collect_peer_cc_metrics(
-                        graph_node, provider_id, provider_name)
-                    collect_peer_to_deal_metrics(
-                        graph_node, provider_id, provider_name)
-                    collect_deal_metrics(
-                        graph_node, provider_id, provider_name)
-                    collect_active_capacity_commitments_stats(
-                        graph_node, provider_id, provider_name)
-                else:
-                    logger.error(
-                        f"Could not find provider with ID: {provider_id}")
+        providers_to_monitor = get_approved_providers(graph_node)
+        if providers_to_monitor:
+            collect_current_epoch_proof_stats(graph_node, providers_to_monitor)
+            for provider in providers_to_monitor:
+                provider_id = provider['id']
+                provider_name = provider['name']
+
+                collect_peer_cc_metrics(
+                    graph_node, provider_id, provider_name)
+                collect_peer_to_deal_metrics(
+                    graph_node, provider_id, provider_name)
+                collect_deal_metrics(
+                    graph_node, provider_id, provider_name)
+                collect_active_capacity_commitments_stats(
+                    graph_node, provider_id, provider_name)
     except Exception as e:
         logger.error(f"Error in collecting metrics from graph-node: {e}")
         raise ()
