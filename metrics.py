@@ -49,6 +49,7 @@ COMMITMENT_CREATED_COUNT = Gauge("fluence_network_commitment_created_count", "To
 COMMITMENT_TOTAL_FAILED_CUS = Gauge("fluence_network_cc_total_failed_cus", "Total count of failed CU",['cc_id','provider_id','provider_name'], registry=registry)
 COMMITMENT_SUBMITTED_PROOFS = Gauge("fluence_network_cc_submitted_proofs", "Total count of submitted proofs", ['cc_id','provider_id','provider_name'], registry=registry)
 COMMITMENT_CURRENT_EPOCH_SUBMITTED_PROOFS = Gauge("fluence_network_cc_current_epoch_submitted_proofs", "Current epoch submitted proofs", ['cc_id','provider_id','provider_name'], registry=registry)
-COMMITMENT_CURRENT_EPOCH_PROJECTED_PROOFS = Gauge("fluence_network_cc_current_epoch_projected_proofs", "Current epoch projected proofs", ['cc_id','provider_id','provider_name'], registry=registry)
+COMMITMENT_CURRENT_EPOCH_MIN_PROJECTED_PROOFS = Gauge("fluence_network_cc_current_epoch_min_projected_proofs", "Current epoch projected proofs (min)", ['cc_id','provider_id','provider_name'], registry=registry)
+COMMITMENT_CURRENT_EPOCH_MAX_PROJECTED_PROOFS = Gauge("fluence_network_cc_current_epoch_max_projected_proofs", "Current epoch projected proofs (max)", ['cc_id','provider_id','provider_name'], registry=registry)
 
 INFO = Info("fluence_network_info", "Info about network", registry=registry)
