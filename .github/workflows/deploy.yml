@@ -31,7 +31,7 @@ on:
         description: "container image to deploy"
         type: string
         required: true
-        default: "fluencelabs/fluence-network-explorer:latest"
+        default: "fluencelabs/fluence-network-exporter:latest"
       ref:
         description: "git ref to deploy from"
         type: string
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: ${{ inputs.env || github.event.inputs.env }}
-      url: "https://github.com/fluencelabs/fluence-network-explorer/commit/${{ github.sha }}"
+      url: "https://github.com/fluencelabs/fluence-network-exporter/commit/${{ github.sha }}"
 
     defaults:
       run:
