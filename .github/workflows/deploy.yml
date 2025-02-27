@@ -1,0 +1,126 @@
+name: deploy
+
+on:
+  workflow_call:
+    inputs:
+      env:
+        description: "env to deploy to"
+        type: string
+        required: true
+      ref:
+        description: "git ref to deploy from"
+        type: string
+        required: true
+        default: "main"
+      image:
+        description: "vodopad image to deploy"
+        type: string
+        required: true
+
+  workflow_dispatch:
+    inputs:
+      env:
+        description: "env to deploy to"
+        default: stage
+        type: choice
+        options:
+          - stage
+          - testnet
+          - mainnet
+        required: true
+      image:
+        description: "container image to deploy"
+        type: string
+        required: true
+        default: "fluencelabs/fluence-network-explorer:latest"
+      ref:
+        description: "git ref to deploy from"
+        type: string
+        required: true
+        default: "main"
+
+concurrency:
+  group: ${{ inputs.env || github.event.inputs.env }}
+
+jobs:
+  deploy:
+    name: "Deploy to ${{ inputs.env || github.event.inputs.env }}"
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.env || github.event.inputs.env }}
+      url: "https://github.com/fluencelabs/fluence-network-explorer/commit/${{ github.sha }}"
+
+    defaults:
+      run:
+        working-directory: "deployment"
+
+    env:
+      ENV: ${{ vars.ENV }}
+      VAULT_ADDR: "https://vault.fluence.dev"
+      TF_VAR_vodopad: "${{ inputs.image || github.event.inputs.image }}"
+
+    permissions:
+      contents: write
+      actions: write
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.event.inputs.ref || github.ref }}
+
+      - name: Get vault token
+        uses: hashicorp/vault-action@v3.0.0
+        with:
+          url: "https://vault.fluence.dev"
+          path: jwt/github
+          role: gitops
+          method: jwt
+          jwtGithubAudience: "https://github.com/fluencelabs"
+          jwtTtl: 300
+          exportToken: true
+          secrets: >-
+            kv/basicauth/devops combined | CONSUL_HTTP_AUTH ;
+            kv/basicauth/devops combined | NOMAD_HTTP_AUTH ;
+
+      - name: Setup vault cli
+        uses: cpanato/vault-installer@v1
+
+      - name: Get ACL tokens
+        run: |
+          # Consul token
+          consul_token=$(vault read -field=token consul/creds/gitops)
+          echo "CONSUL_HTTP_TOKEN=$consul_token" >> $GITHUB_ENV
+          echo "::add-mask::$consul_token"
+          # Nomad token
+          nomad_token=$(vault read -field=secret_id nomad/creds/gitops)
+          echo "NOMAD_TOKEN=$nomad_token" >> $GITHUB_ENV
+          echo "::add-mask::$nomad_token"
+
+      - name: Setup terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: terraform init
+        id: init
+        run: terraform init
+
+      - name: Terraform select workspace
+        run: |
+          terraform workspace select -or-create=true ${{ env.ENV }}
+
+      - name: terraform plan
+        id: plan
+        run: terraform plan -no-color
+
+      - name: Print terraform plan to checks
+        run: |
+          cat <<'PLAN' >> $GITHUB_STEP_SUMMARY
+          ## ${{ env.ENV }} plan
+          ```
+          ${{ steps.plan.outputs.stdout }}
+          ```
+          PLAN
+
+      - name: terraform apply
+        run: terraform apply -auto-approve
