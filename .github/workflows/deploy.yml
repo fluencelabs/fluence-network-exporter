@@ -11,7 +11,6 @@ on:
         description: "git ref to deploy from"
         type: string
         required: true
-        default: "main"
       image:
         description: "vodopad image to deploy"
         type: string
