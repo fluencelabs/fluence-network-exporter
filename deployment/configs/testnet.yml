@@ -1,0 +1,18 @@
+rpc_url: "https://rpc.testnet.fluence.dev"
+graph_node_url: "https://subgraph.testnet.fluence.dev/subgraphs/v0.30"
+
+addresses:
+  - address: "0xf4088F6Cbe36e60CB8e2B69208f74a6C81FFeCE3"
+    name: fluence-network-exporter
+    minimum_balance: 100
+  - address: "0xA061470180457b6da7f50aF8c14Df9CE379218c6"
+    name: capacity-reward-pool (diamond)
+    minimum_balance: 460800
+  - address: "0x4C1f5c7186CeD6499430757001b4df16d7F939ab"
+    name: oracle
+    minimum_balance: 5
+
+diamond_address: "0xA061470180457b6da7f50aF8c14Df9CE379218c6"
+
+transaction:
+  enabled: true
