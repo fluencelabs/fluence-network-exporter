@@ -27,7 +27,15 @@ jobs:
         id: release
         uses: google-github-actions/release-please-action@v4
         with:
-          release-type: simple
+          token: ${{ secrets.FLUENCEBOT_RELEASE_PLEASE_PAT }}
+          config-file: .github/release-please/config.json
+          manifest-file: .github/release-please/manifest.json
+
+      - name: Show output from release-please
+        if: steps.release.outputs.release_created
+        env:
+          RELEASE_PLEASE_OUTPUT: ${{ toJSON(steps.release.outputs) }}
+        run: echo "${RELEASE_PLEASE_OUTPUT}" | jq
 
       - name: Show output from release-please
         if: steps.release.outputs.releases_created
@@ -35,52 +43,30 @@ jobs:
           RELEASE_PLEASE_OUTPUT: ${{ toJSON(steps.release.outputs) }}
         run: echo "${RELEASE_PLEASE_OUTPUT}" | jq
 
-  publish:
+  container:
+    needs:
+      - release-please
     if: needs.release-please.outputs.release-created
-    runs-on: ubuntu-latest
+    uses: ./.github/workflows/container.yml
+    with:
+      image-name: "fluencelabs/fluence-network-exporter"
+      ref: ${{ needs.release-please.outputs.tag-name }}
+      release: "true"
 
-    needs: release-please
-
-    permissions:
-      contents: read
-      id-token: write
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.release-please.outputs.tag-name }}
-
-      - name: Import secrets
-        uses: hashicorp/vault-action@v2.4.3
-        with:
-          url: https://vault.fluence.dev
-          path: jwt/github
-          role: ci
-          method: jwt
-          jwtGithubAudience: "https://github.com/fluencelabs"
-          jwtTtl: 300
-          secrets: |
-            kv/hub.docker.com/fluencebot username | DOCKER_HUB_USERNAME ;
-            kv/hub.docker.com/fluencebot password | DOCKER_HUB_PASSWORD ;
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ env.DOCKER_HUB_USERNAME }}
-          password: ${{ env.DOCKER_HUB_PASSWORD }}
-
-      - name: Build and push container
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          file: Dockerfile
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          tags: |
-            fluencelabs/fluence-network-exporter:latest
-            fluencelabs/fluence-network-exporter:${{ needs.release-please.outputs.version }}
+  deploy:
+    needs:
+      - release-please
+      - container
+    if: needs.release-please.outputs.release-created
+    strategy:
+      fail-fast: false
+      matrix:
+        env:
+          - stage
+          - testnet
+          - mainnet
+    uses: ./.github/workflows/deploy.yml
+    with:
+      ref: ${{ needs.release-please.outputs.tag-name }}
+      env: ${{ matrix.env }}
+      image: fluencelabs/fluence-network-exporter:${{ needs.release-please.outputs.version }}

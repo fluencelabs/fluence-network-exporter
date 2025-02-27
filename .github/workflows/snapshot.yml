@@ -1,0 +1,36 @@
+name: "snapshot"
+
+on:
+  pull_request:
+    paths-ignore:
+      - "**.md"
+  push:
+    branches:
+      - "main"
+    paths-ignore:
+      - "**.md"
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  container:
+    if: >
+      github.event_name == 'push' ||
+      (
+        contains(github.event.pull_request.labels.*.name, 'snapshot') &&
+        !github.event.pull_request.head.repo.fork
+      )
+    uses: ./.github/workflows/container.yml
+    with:
+      image-name: "docker.fluence.dev/fluence-network-exporter"
+      ref: ${{ github.ref }}
+
+  deploy:
+    needs: container
+    uses: ./.github/workflows/deploy.yml
+    with:
+      ref: ${{ github.ref }}
+      env: stage
+      image: ${{ needs.container.outputs.image }}
