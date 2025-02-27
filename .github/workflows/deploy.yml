@@ -12,7 +12,7 @@ on:
         type: string
         required: true
       image:
-        description: "vodopad image to deploy"
+        description: "image to deploy"
         type: string
         required: true
 
@@ -56,7 +56,7 @@ jobs:
     env:
       ENV: ${{ vars.ENV }}
       VAULT_ADDR: "https://vault.fluence.dev"
-      TF_VAR_vodopad: "${{ inputs.image || github.event.inputs.image }}"
+      TF_VAR_image: "${{ inputs.image || github.event.inputs.image }}"
 
     permissions:
       contents: write
