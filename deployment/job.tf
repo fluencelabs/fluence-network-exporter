@@ -18,7 +18,7 @@ resource "consul_keys" "configs" {
 }
 
 resource "vault_policy" "fluence-network-exporter" {
-  name = "${local.env}/fluence-network-exporter"
+  name = "${local.region}/fluence-network-exporter"
 
   policy = <<-EOH
     path "kv/fluence-network-exporter/${local.region}/transaction-key"
