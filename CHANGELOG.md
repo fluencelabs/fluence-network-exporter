@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.1](https://github.com/fluencelabs/fluence-network-exporter/compare/v3.2.0...v3.2.1) (2025-03-03)
+
+
+### Bug Fixes
+
+* collect proofs stats only for active cc ([#43](https://github.com/fluencelabs/fluence-network-exporter/issues/43)) ([cf6018f](https://github.com/fluencelabs/fluence-network-exporter/commit/cf6018f4cf9f52adcb8dacaf05adb035eeedbb85))
+
 ## [3.2.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v3.1.0...v3.2.0) (2025-02-26)
 
 
