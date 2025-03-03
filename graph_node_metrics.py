@@ -42,7 +42,7 @@ def get_latest_block(client):
         block = response['_meta']['block']['number']
         FLUENCE_SUBGRAPH_LATEST_BLOCK.set(block)
     except Exception as e:
-        logger.error(f"Error fetching latest block number: {e}")
+        logger.error(f"Error fetching latest block number")
         raise
 
 def get_current_epoch(client):
@@ -335,21 +335,23 @@ def collect_current_epoch_proof_stats(client, providers):
 
             query = gql(f'''
             query  {{
-              capacityCommitmentStatsPerEpoches(where: {{epoch: "{epoch_id}"}}) {{
-                submittedProofsCount
-                totalFailCount
-                id
-                activeUnitCount
+              capacityCommitmentStatsPerEpoches(
+                where: {{epoch: "{epoch_id}"}, capacityCommitment_: {{status: Active}}}}
+              ) {{
                 capacityCommitment {{
-                  id
                   provider {{
-                    id
                     name
                   }}
+                  submittedProofsCount
+                  totalFailCount
+                  exitedUnitCount
+                  id
                 }}
+                activeUnitCount
               }}
-            }}   
+            }}
             ''')
+
             response = client.execute(query)
             stats = response['capacityCommitmentStatsPerEpoches']
             provider_ids = set([provider['id'] for provider in providers])
