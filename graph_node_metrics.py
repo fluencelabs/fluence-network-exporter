@@ -336,22 +336,22 @@ def collect_current_epoch_proof_stats(client, providers):
             query = gql(f'''
             query  {{
               capacityCommitmentStatsPerEpoches(
-                where: {{epoch: "{epoch_id}"}, capacityCommitment_: {{status: Active}}}}
+                where: {{epoch: "{epoch_id}", capacityCommitment_: {{status: Active}}}}
               ) {{
+                submittedProofsCount
+                totalFailCount
+                id
+                activeUnitCount
                 capacityCommitment {{
+                  id
                   provider {{
+                    id
                     name
                   }}
-                  submittedProofsCount
-                  totalFailCount
-                  exitedUnitCount
-                  id
                 }}
-                activeUnitCount
               }}
-            }}
+            }}   
             ''')
-
             response = client.execute(query)
             stats = response['capacityCommitmentStatsPerEpoches']
             provider_ids = set([provider['id'] for provider in providers])
