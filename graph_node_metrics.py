@@ -345,7 +345,7 @@ def collect_current_epoch_proof_stats(client, providers):
         query = gql(f'''
         query {{
           capacityCommitmentStatsPerEpoches(
-            where: {{epoch: "{epoch_id}", capacityCommitment_: {{status: "Active"}}}}
+            where: {{epoch: "{epoch_id}", capacityCommitment_: {{status: Active}}}}
           ) {{
             submittedProofsCount
             totalFailCount
