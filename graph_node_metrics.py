@@ -321,66 +321,86 @@ def collect_active_capacity_commitments_stats(client, provider_id, provider_name
         logger.error(f"Error collecting active capacity commitments: {e}")
         raise
 
+
 def collect_current_epoch_proof_stats(client, providers):
     """Collect proof stats for the current epoch."""
     try:
         current_epoch = get_current_epoch(client)
         network_info = get_network_info(client)
-        if current_epoch and network_info:
-            epoch_id = current_epoch['id']
-            max_proofs = int(network_info['graphNetworks'][0]['maxProofsPerEpoch'])
-            min_proofs = int(network_info['graphNetworks'][0]['minRequiredProofsPerEpoch'])
-            epoch_duration = int(network_info['graphNetworks'][0]['coreEpochDuration'])
-            time_from_epoch_start = int(time.time()) - int(current_epoch['startTimestamp'])
+        if not current_epoch or not network_info:
+            logger.warning("Failed to get current epoch or network info")
+            return
 
-            query = gql(f'''
-            query  {{
-              capacityCommitmentStatsPerEpoches(
-                where: {{epoch: "{epoch_id}", capacityCommitment_: {{status: Active}}}}
-              ) {{
-                submittedProofsCount
-                totalFailCount
+        epoch_id = current_epoch['id']
+        max_proofs = int(network_info['graphNetworks'][0]['maxProofsPerEpoch'])
+        min_proofs = int(network_info['graphNetworks'][0]['minRequiredProofsPerEpoch'])
+        epoch_duration = int(network_info['graphNetworks'][0]['coreEpochDuration'])
+
+        if epoch_duration == 0:
+            logger.error("Epoch duration is zero, cannot calculate projected proofs")
+            return
+
+        time_from_epoch_start = int(time.time()) - int(current_epoch['startTimestamp'])
+
+        query = gql(f'''
+        query {{
+          capacityCommitmentStatsPerEpoches(
+            where: {{epoch: "{epoch_id}", capacityCommitment_: {{status: Active}}}}
+          ) {{
+            submittedProofsCount
+            totalFailCount
+            id
+            activeUnitCount
+            capacityCommitment {{
+              id
+              provider {{
                 id
-                activeUnitCount
-                capacityCommitment {{
-                  id
-                  provider {{
-                    id
-                    name
-                  }}
-                }}
+                name
               }}
-            }}   
-            ''')
-            response = client.execute(query)
-            stats = response['capacityCommitmentStatsPerEpoches']
-            provider_ids = set([provider['id'] for provider in providers])
+            }}
+          }}
+        }}
+        ''')
+        response = client.execute(query)
+        stats = response.get('capacityCommitmentStatsPerEpoches', [])
+        if not stats:
+            logger.warning("No stats returned from GraphQL query")
+            return
 
-            for stat in stats:
-                provider_id = stat['capacityCommitment']['provider']['id']
-                provider_name = stat['capacityCommitment']['provider']['name']
-                cc_id = stat['capacityCommitment']['id']
-                activeUnitCount = int(stat['activeUnitCount'])
+        provider_ids = {provider['id'] for provider in providers}
+        current_cc_ids = {stat['capacityCommitment']['id'] for stat in stats}
 
-                if provider_id in provider_ids:
-                    submitted_proofs = stat['submittedProofsCount']
-                    max_projected_proofs = (activeUnitCount * max_proofs ) * (time_from_epoch_start / epoch_duration)
-                    min_projected_proofs = (activeUnitCount * min_proofs ) * (time_from_epoch_start / epoch_duration)
+        for metric in [COMMITMENT_CURRENT_EPOCH_SUBMITTED_PROOFS,
+                       COMMITMENT_CURRENT_EPOCH_MIN_PROJECTED_PROOFS,
+                       COMMITMENT_CURRENT_EPOCH_MAX_PROJECTED_PROOFS]:
+            for labels in list(metric._metrics.keys()):
+                cc_id = labels[0]
+                if cc_id not in current_cc_ids:
+                    metric.remove(*labels)
 
-                    COMMITMENT_CURRENT_EPOCH_SUBMITTED_PROOFS.labels(
-                        cc_id = cc_id,
-                        provider_id=provider_id,
-                        provider_name=provider_name).set(submitted_proofs)
+        for stat in stats:
+            provider_id = stat['capacityCommitment']['provider']['id']
+            provider_name = stat['capacityCommitment']['provider']['name']
+            cc_id = stat['capacityCommitment']['id']
+            active_unit_count = int(stat['activeUnitCount'])
 
-                    COMMITMENT_CURRENT_EPOCH_MAX_PROJECTED_PROOFS.labels(
-                        cc_id = cc_id,
-                        provider_id=provider_id,
-                        provider_name=provider_name).set(max_projected_proofs)
+            if provider_id not in provider_ids:
+                continue
 
-                    COMMITMENT_CURRENT_EPOCH_MIN_PROJECTED_PROOFS.labels(
-                        cc_id = cc_id,
-                        provider_id=provider_id,
-                        provider_name=provider_name).set(min_projected_proofs)
+            submitted_proofs = int(stat['submittedProofsCount'])
+            max_projected_proofs = (active_unit_count * max_proofs) * (time_from_epoch_start / epoch_duration)
+            min_projected_proofs = (active_unit_count * min_proofs) * (time_from_epoch_start / epoch_duration)
+
+            COMMITMENT_CURRENT_EPOCH_SUBMITTED_PROOFS.labels(
+                cc_id=cc_id, provider_id=provider_id, provider_name=provider_name
+            ).set(submitted_proofs)
+            COMMITMENT_CURRENT_EPOCH_MAX_PROJECTED_PROOFS.labels(
+                cc_id=cc_id, provider_id=provider_id, provider_name=provider_name
+            ).set(max_projected_proofs)
+            COMMITMENT_CURRENT_EPOCH_MIN_PROJECTED_PROOFS.labels(
+                cc_id=cc_id, provider_id=provider_id, provider_name=provider_name
+            ).set(min_projected_proofs)
+
     except Exception as e:
         logger.error(f"Error collecting proof stats: {e}")
         raise
