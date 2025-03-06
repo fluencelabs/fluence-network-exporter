@@ -6,7 +6,7 @@ locals {
 variable "image" {
   description = "container image"
   type        = string
-  default     = "fluencelabs/fluence-network-exporter:3.2.1" # x-release-please-version
+  default     = "fluencelabs/fluence-network-exporter:3.2.2" # x-release-please-version
 }
 
 resource "consul_keys" "configs" {

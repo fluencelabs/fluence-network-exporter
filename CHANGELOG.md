@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.2](https://github.com/fluencelabs/fluence-network-exporter/compare/v3.2.1...v3.2.2) (2025-03-06)
+
+
+### Bug Fixes
+
+* Remove obsolete timeseries ([#45](https://github.com/fluencelabs/fluence-network-exporter/issues/45)) ([1aab9c0](https://github.com/fluencelabs/fluence-network-exporter/commit/1aab9c0394dbe83e7359053f36e244bfc4157abc))
+
 ## [3.2.1](https://github.com/fluencelabs/fluence-network-exporter/compare/v3.2.0...v3.2.1) (2025-03-03)
 
 
