@@ -47,7 +47,7 @@ if __name__ == '__main__':
         config_file_path = os.getenv("CONFIG_FILE", "config.yml")
         config = config_loader.load_config(config_file_path)
 
-        rpc_url = config.rpc_url
+        rpc_url = os.getenv("RPC_URL") or config.rpc_url
         graph_node_url = config.graph_node_url
         port = int(os.getenv("PORT", str(config.port)))
 

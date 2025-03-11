@@ -4,23 +4,34 @@ import time
 import threading
 from config_loader import AddressEntry
 import logging
+from urllib.parse import urlparse, urlunparse
 
 # Set up logging
 logger = logging.getLogger(__name__)
 
 
+def mask_secret(url: str) -> str:
+    parsed = urlparse(url)
+    if parsed.path and parsed.path != '/':
+        masked_path = '/****'
+        masked_url = urlunparse((parsed.scheme, parsed.netloc, masked_path, parsed.params, parsed.query, parsed.fragment))
+        return masked_url
+    return url
+
+
 def connect_rpc(url: str) -> Web3:
     """Connect to RPC."""
+    masked_url = mask_secret(url)
     try:
         web3 = Web3(Web3.HTTPProvider(url))
         if web3.is_connected():
-            logger.info(f"Successfully connected to the RPC endpoint: {url}")
+            logger.info(f"Successfully connected to the RPC endpoint: {masked_url}")
             return web3
         else:
             raise ConnectionError(
-                f"Failed to connect to the RPC endpoint: {url}")
+                f"Failed to connect to the RPC endpoint: {masked_url}")
     except Exception as e:
-        logger.error(f"Error connecting to RPC endpoint {url}: {e}")
+        logger.error(f"Error connecting to RPC endpoint {masked_url}: {e}")
         raise
 
 
