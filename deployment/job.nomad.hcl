@@ -74,6 +74,16 @@ job "fluence-network-exporter" {
         env         = true
       }
 
+      template {
+        data        = <<-EOH
+        {{- with secret "kv/fluence-network-exporter/${var.region}/chain" -}}
+        RPC_URL="{{ .Data.rpc_url }}"
+        {{- end -}}
+        EOH
+        destination = "secrets/secret.env"
+        env         = true
+      }
+
       resources {
         cpu        = 50
         memory     = 128
