@@ -25,6 +25,11 @@ resource "vault_policy" "fluence-network-exporter" {
     {
       capabilities = ["read"]
     }
+
+    path "kv/fluence-network-exporter/${local.region}/chain"
+    {
+      capabilities = ["read"]
+    }
   EOH
 }
 
