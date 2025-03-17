@@ -130,11 +130,21 @@ def collect_reward_balance(rpc: Web3, diamond_address: str):
     REWARD_BALANCE_FLT.set(reward_balance_eth)
     logger.debug(f"Diamond {diamond_address} reward balance is {reward_balance_eth} FLT")
 
+def collect_pool_balance(rpc: Web3, balance_keeper_address: str, usdc_address: str):
+    abi = '[{"type":"function","name":"poolBalance","inputs":[{"name":"token","type":"address","internalType":"contract IERC20"}],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"}]'
+    balance_keeper = rpc.eth.contract(address=balance_keeper_address, abi=abi)
+    pool_balance = balance_keeper.functions.poolBalance(token=usdc_address).call()
+    pool_balance_usdc = pool_balance / 1e6
+    POOL_BALANCE_USDC.set(pool_balance_usdc)
+    logger.debug(f"Balance Keeper {balance_keeper_address} pool balance is {pool_balance_usdc} USDC")
+
 
 def collect_metrics(
     rpc: Web3,
     addresses_to_monitor: list[AddressEntry],
-    diamond_address: str
+    diamond_address: str,
+    balance_keeper_address: str,
+    usdc_address: str
 ):
     """Collect block height and address balances"""
     try:
@@ -145,6 +155,8 @@ def collect_metrics(
             collect_balances(rpc, addresses_to_monitor)
         if diamond_address:
             collect_reward_balance(rpc, diamond_address)
+        if balance_keeper_address and usdc_address:
+            collect_pool_balance(rpc, balance_keeper_address, usdc_address)
 
     except Exception as e:
         logger.error(f"Error collecting network metrics: {e}")

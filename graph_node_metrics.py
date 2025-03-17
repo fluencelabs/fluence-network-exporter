@@ -10,6 +10,8 @@ logger = logging.getLogger(__name__)
 logging.getLogger("gql").setLevel(logging.WARNING)
 
 
+FLT_PRECISION = 1e18
+
 def connect_graph_node(graph_node_url):
     """Connect to the Graph Node using the provided URL."""
     try:
@@ -405,6 +407,39 @@ def collect_current_epoch_proof_stats(client, providers):
         logger.error(f"Error collecting proof stats: {e}")
         raise
 
+def collect_cc_rewards_balances(client):
+    """Collect Capacity Commitment rewards balances."""
+    try:
+        query = gql('''
+        query  {
+          ccsReward(id: "total") {
+            totalCapacityRewards
+            unlockedCapacityRewards
+            withdrawnCapacityRewards
+            totalDealStakerRewards
+          }
+        }
+        ''')
+        response = client.execute(query)
+
+        values = response.get('ccsReward', [])
+        if not values:
+            logger.warning("No ccsReward values returned from GraphQL query")
+            return
+
+
+        total_capacity_reward_balance_flt = float(values['totalCapacityRewards']) / FLT_PRECISION
+        unlocked_capacity_reward_balance_flt = float(values['unlockedCapacityRewards']) / FLT_PRECISION
+        withdrawn_capacity_reward_balance_flt = float(values['withdrawnCapacityRewards']) / FLT_PRECISION
+        total_deal_staker_reward_flt = float(values['totalDealStakerRewards']) / FLT_PRECISION
+
+        TOTAL_CAPACITY_REWARD_FLT.set(total_capacity_reward_balance_flt)
+        UNLOCKED_CAPACITY_REWARD_FLT.set(unlocked_capacity_reward_balance_flt)
+        WITHDRAWN_CAPACITY_REWARD_FLT.set(withdrawn_capacity_reward_balance_flt)
+        TOTAL_DEAL_STAKER_REWARD_FLT.set(total_deal_staker_reward_flt)
+    except Exception as e:
+        logger.error(f"Error collecting CC rewards balances: {e}")
+        raise
 
 def collect_graph_networks_metrics(client):
     try:
@@ -462,6 +497,7 @@ def collect_metrics(graph_node):
     try:
         get_latest_block(graph_node)
         collect_graph_networks_metrics(graph_node)
+        collect_cc_rewards_balances(graph_node)
 
         providers_to_monitor = get_approved_providers(graph_node)
         if providers_to_monitor:

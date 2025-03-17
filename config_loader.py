@@ -27,6 +27,8 @@ class ConfigSchema(BaseModel):
     transaction: Optional[TransactionConfig] = None
     port: Optional[int] = 8001
     diamond_address: Optional[constr(min_length=1)] = None
+    balance_keeper_address: Optional[constr(min_length=1)] = None
+    usdc_address: Optional[constr(min_length=1)] = None
 
 
 def load_config(config_file_path: str) -> ConfigSchema:

@@ -10,9 +10,14 @@ addresses:
     minimum_balance: 120000
   - address: "0x2d08fE09E35A33Af0729f753809A649c10441B13"
     name: oracle
-    minimum_balance: 5
+    minimum_balance: 100
+  - address: "0x7e78De782eA37Bd76BE63e4Ce0991216F1462050"
+    name: vodopad
+    minimum_balance: 1000
 
 diamond_address: "0xb05C35133C01C7193F09079eAeF97F693aE0E552"
+balance_keeper_address: "0xF0C308C622eeBA94aeEc2E3Fd67F34619f86761B"
+usdc_address: "0x2eC84f93e4F26465c38Fa8165A8927522290A138"
 
 transaction:
   enabled: true

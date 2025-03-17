@@ -25,6 +25,12 @@ FLUENCE_DEAL_ACTIVE_START_DATE=Gauge('fluence_network_deal_active_start_date', '
 FLUENCE_SUBGRAPH_LATEST_BLOCK = Gauge('fluence_network_subgraph_latest_block','The latest block number seen by subgraph', registry=registry)
 
 REWARD_BALANCE_FLT = Gauge('fluence_network_reward_balance', 'Amount of FLT designated to Capacity Rewards on Diamond (scaled to ether)', registry=registry)
+POOL_BALANCE_USDC = Gauge('fluence_network_pool_balance', 'Amount of USDC designated to Gateway Pool on Balance Keeper', registry=registry)
+
+TOTAL_CAPACITY_REWARD_FLT = Gauge('fluence_network_total_capacity_rewards', 'Total Amount of FLT designated to Capacity Rewards on Diamond (scaled to ether)', registry=registry)
+UNLOCKED_CAPACITY_REWARD_FLT = Gauge('fluence_network_unlocked_rewards', 'Amount of unlocked rewards in FLT (scaled to ether)', registry=registry)
+WITHDRAWN_CAPACITY_REWARD_FLT = Gauge('fluence_network_withdrawn_rewards', 'Amount of withdrawn rewards in FLT (scaled to ether)', registry=registry)
+TOTAL_DEAL_STAKER_REWARD_FLT = Gauge('fluence_network_deal_staker_rewards', 'Amount of deal staker rewards in FLT (scaled to ether)', registry=registry)
 
 FLT_PRICE = Gauge("fluence_network_flt_price", "Price of FLT in USD", registry=registry)
 USD_COLLATERAL_PER_UNIT = Gauge("fluence_network_usd_collateral_per_unit", "USD collateral per compute unit", registry=registry)
