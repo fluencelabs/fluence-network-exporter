@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v3.3.0...v3.4.0) (2025-03-18)
+
+
+### Features
+
+* monitoring of vodopad wallet, ccs rewards and bk pool ([#49](https://github.com/fluencelabs/fluence-network-exporter/issues/49)) ([c401e96](https://github.com/fluencelabs/fluence-network-exporter/commit/c401e968c72336d5ca5be8852328591b02b2bcee))
+
 ## [3.3.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v3.2.2...v3.3.0) (2025-03-11)
 
 
