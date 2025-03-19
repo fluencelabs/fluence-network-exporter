@@ -5,7 +5,7 @@ addresses:
   - address: "0x9262768725134b7d52041FAb42287EA2147D0c77"
     name: fluence-network-exporter
     minimum_balance: 100
-  - address: "x72D09226141645949D09191bC42Da7de88535461"
+  - address: "0x72D09226141645949D09191bC42Da7de88535461"
     name: capacity-reward-pool (diamond)
     minimum_balance: 2764800
   - address: "0x79b4Fdbae5d4D012113Dcfe8B765CE03dB7444AE"
