@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.1](https://github.com/fluencelabs/fluence-network-exporter/compare/v3.4.0...v3.4.1) (2025-03-19)
+
+
+### Bug Fixes
+
+* diamond stage address  ([#51](https://github.com/fluencelabs/fluence-network-exporter/issues/51)) ([756b23e](https://github.com/fluencelabs/fluence-network-exporter/commit/756b23ed1549350596b8e4987f84ebfc02850361))
+
 ## [3.4.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v3.3.0...v3.4.0) (2025-03-18)
 
 
