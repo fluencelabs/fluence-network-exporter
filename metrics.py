@@ -41,7 +41,10 @@ VESTING_PERIOD_COUNT = Gauge("fluence_network_vesting_period_count", "Vesting pe
 MAX_PROOFS_PER_EPOCH = Gauge("fluence_network_max_proofs_per_epoch", "Maximum proofs per epoch", registry=registry)
 WITHDRAW_EPOCHS_AFTER_FAILED = Gauge("fluence_network_withdraw_epochs_after_failed", "Withdraw epochs after failed", registry=registry)
 SLASHING_RATE = Gauge("fluence_network_slashing_rate", "Slashing rate in percents", registry=registry)
+
 CORE_EPOCH_DURATION = Gauge("fluence_network_core_epoch_duration", "Epoch Duration in seconds", registry=registry)
+CORE_CURRENT_EPOCH_START = Gauge("fluence_network_core_current_epoch_start", "Current epoch start", registry=registry)
+
 CAPACITY_MAX_FAILED_RATIO = Gauge("fluence_network_capacity_max_failed_ratio", "CC maximum failed epochs", registry=registry)
 USD_TARGET_REVENUE_PER_EPOCH = Gauge("fluence_network_usd_target_revenue_per_epoch", "Target revenue per CC per epoch in non-scaled USD", registry=registry)
 MIN_REQUIRED_PROOFS_PER_EPOCH = Gauge("fluence_network_min_required_proofs_per_epoch", "Minimum proofs per CU per epoch", registry=registry)
@@ -57,5 +60,6 @@ COMMITMENT_SUBMITTED_PROOFS = Gauge("fluence_network_cc_submitted_proofs", "Tota
 COMMITMENT_CURRENT_EPOCH_SUBMITTED_PROOFS = Gauge("fluence_network_cc_current_epoch_submitted_proofs", "Current epoch submitted proofs", ['cc_id','provider_id','provider_name'], registry=registry)
 COMMITMENT_CURRENT_EPOCH_MIN_PROJECTED_PROOFS = Gauge("fluence_network_cc_current_epoch_min_projected_proofs", "Current epoch projected proofs (min)", ['cc_id','provider_id','provider_name'], registry=registry)
 COMMITMENT_CURRENT_EPOCH_MAX_PROJECTED_PROOFS = Gauge("fluence_network_cc_current_epoch_max_projected_proofs", "Current epoch projected proofs (max)", ['cc_id','provider_id','provider_name'], registry=registry)
+COMMITMENT_CURRENT_UNITS = Gauge("fluence_network_cc_current_epoch_cus", "Current epoch CUs stat", ['cc_id','provider_id','provider_name','status'], registry=registry)
 
 INFO = Info("fluence_network_info", "Info about network", registry=registry)

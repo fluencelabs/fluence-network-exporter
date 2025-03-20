@@ -328,6 +328,9 @@ def collect_current_epoch_proof_stats(client, providers):
     """Collect proof stats for the current epoch."""
     try:
         current_epoch = get_current_epoch(client)
+
+        CORE_CURRENT_EPOCH_START.set(current_epoch['startTimestamp'])
+
         network_info = get_network_info(client)
         if not current_epoch or not network_info:
             logger.warning("Failed to get current epoch or network info")
@@ -353,6 +356,8 @@ def collect_current_epoch_proof_stats(client, providers):
             totalFailCount
             id
             activeUnitCount
+            exitedUnitCount
+            computeUnitsWithMinRequiredProofsSubmittedCounter
             capacityCommitment {{
               id
               provider {{
@@ -385,6 +390,8 @@ def collect_current_epoch_proof_stats(client, providers):
             provider_name = stat['capacityCommitment']['provider']['name']
             cc_id = stat['capacityCommitment']['id']
             active_unit_count = int(stat['activeUnitCount'])
+            exited_unit_count = int(stat['exitedUnitCount'])
+            finished_unit_count = int(stat['computeUnitsWithMinRequiredProofsSubmittedCounter'])
 
             if provider_id not in provider_ids:
                 continue
@@ -402,7 +409,15 @@ def collect_current_epoch_proof_stats(client, providers):
             COMMITMENT_CURRENT_EPOCH_MIN_PROJECTED_PROOFS.labels(
                 cc_id=cc_id, provider_id=provider_id, provider_name=provider_name
             ).set(min_projected_proofs)
-
+            COMMITMENT_CURRENT_UNITS.labels(
+                cc_id=cc_id, provider_id=provider_id, provider_name=provider_name, status='active'
+            ).set(active_unit_count)
+            COMMITMENT_CURRENT_UNITS.labels(
+                cc_id=cc_id, provider_id=provider_id, provider_name=provider_name, status='exited'
+            ).set(exited_unit_count)
+            COMMITMENT_CURRENT_UNITS.labels(
+                cc_id=cc_id, provider_id=provider_id, provider_name=provider_name, status='sent_enough_proofs'
+            ).set(finished_unit_count)
     except Exception as e:
         logger.error(f"Error collecting proof stats: {e}")
         raise
