@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v3.4.1...v3.5.0) (2025-03-20)
+
+
+### Features
+
+* Current epoch units stats ([#53](https://github.com/fluencelabs/fluence-network-exporter/issues/53)) ([cd70475](https://github.com/fluencelabs/fluence-network-exporter/commit/cd70475578f7085a7666a6e4c933ad32696c70a1))
+
 ## [3.4.1](https://github.com/fluencelabs/fluence-network-exporter/compare/v3.4.0...v3.4.1) (2025-03-19)
 
 
