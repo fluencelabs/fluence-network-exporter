@@ -379,7 +379,8 @@ def collect_current_epoch_proof_stats(client, providers):
 
         for metric in [COMMITMENT_CURRENT_EPOCH_SUBMITTED_PROOFS,
                        COMMITMENT_CURRENT_EPOCH_MIN_PROJECTED_PROOFS,
-                       COMMITMENT_CURRENT_EPOCH_MAX_PROJECTED_PROOFS]:
+                       COMMITMENT_CURRENT_EPOCH_MAX_PROJECTED_PROOFS,
+                       COMMITMENT_CURRENT_UNITS]:
             for labels in list(metric._metrics.keys()):
                 cc_id = labels[0]
                 if cc_id not in current_cc_ids:
