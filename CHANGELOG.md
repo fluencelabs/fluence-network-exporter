@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.1](https://github.com/fluencelabs/fluence-network-exporter/compare/v3.5.0...v3.5.1) (2025-03-27)
+
+
+### Bug Fixes
+
+* obsolete cus stats gc ([#56](https://github.com/fluencelabs/fluence-network-exporter/issues/56)) ([6b27da3](https://github.com/fluencelabs/fluence-network-exporter/commit/6b27da3babd794cfd9a77cc5284e51c3d9b4724f))
+
 ## [3.5.0](https://github.com/fluencelabs/fluence-network-exporter/compare/v3.4.1...v3.5.0) (2025-03-20)
 
 
