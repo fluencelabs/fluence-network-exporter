@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.2](https://github.com/fluencelabs/fluence-network-exporter/compare/v3.5.1...v3.5.2) (2025-03-29)
+
+
+### Bug Fixes
+
+* vodopad min balance decreased ([#58](https://github.com/fluencelabs/fluence-network-exporter/issues/58)) ([9bd2913](https://github.com/fluencelabs/fluence-network-exporter/commit/9bd29133551a83c485500da0bfe512eb5febef59))
+
 ## [3.5.1](https://github.com/fluencelabs/fluence-network-exporter/compare/v3.5.0...v3.5.1) (2025-03-27)
 
 
