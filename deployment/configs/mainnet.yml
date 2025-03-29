@@ -13,7 +13,7 @@ addresses:
     minimum_balance: 100
   - address: "0x7e78De782eA37Bd76BE63e4Ce0991216F1462050"
     name: vodopad
-    minimum_balance: 1000
+    minimum_balance: 700
 
 diamond_address: "0xb05C35133C01C7193F09079eAeF97F693aE0E552"
 balance_keeper_address: "0xF0C308C622eeBA94aeEc2E3Fd67F34619f86761B"
