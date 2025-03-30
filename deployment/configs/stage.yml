@@ -13,6 +13,8 @@ addresses:
     minimum_balance: 5
 
 diamond_address: "0x72D09226141645949D09191bC42Da7de88535461"
+balance_keeper_address: "0x11850d140016a28E086Bf0173Cb765d032F3BE6D"
+usdc_address: "0xdB0e8f778bd98161b7E089Ed0c5B54eDf9387E1e"
 
 transaction:
   enabled: true
