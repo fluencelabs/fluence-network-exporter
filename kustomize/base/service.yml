@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fluence-network-exporter
+  labels:
+    app: fluence-network-exporter
+spec:
+  ports:
+    - name: http
+      port: 8001
+      targetPort: http
+  selector:
+    app: fluence-network-exporter
