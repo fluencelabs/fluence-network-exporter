@@ -4,6 +4,6 @@ namespace: fluence
 resources:
   - deployment.yml
   - fluence-network-exporter-secrets.yml
-  - fleunce-network-exporter-alerts.yml
+  - fluence-network-exporter-alerts.yml
   - service.yml
   - service-monitor.yml
