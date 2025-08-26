@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fluence-network-exporter
+spec:
+  selector:
+    matchLabels:
+      app: fluence-network-exporter
+  template:
+    metadata:
+      labels:
+        app: fluence-network-exporter
+    spec:
+      containers:
+        - name: fluence-network-exporter
+          image: fluence/fluence-network-exporter
+          ports:
+            - name: http
+              containerPort: 8001
+          envFrom:
+            - configMapRef:
+                name: fluence-network-exporter
+          env:
+            - name: PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: fluence-network-exporter-secrets
+                  key: private_key
+            - name: RPC_URL
+              valueFrom:
+                secretKeyRef:
+                  name: fluence-network-exporter-secrets
+                  key: rpc_url
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              memory: 256Mi
+          volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: fluence-network-exporter

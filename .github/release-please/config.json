@@ -5,7 +5,14 @@
   "packages": {
     ".": {
       "release-type": "simple",
-      "extra-files": ["deployment/job.tf"]
+      "extra-files": [
+        "deployment/job.tf",
+        {
+          "type": "yaml",
+          "path": "kustomize/overlays/stage/kustomization.yml",
+          "yamlpath": "$.images[?(@.name==\"fluence/fluence-network-exporter\")].newTag"
+        }
+      ]
     }
   }
 }

@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: fluence
+resources:
+  - deployment.yml
+  - fluence-network-exporter-secrets.yml
+  - fluence-network-exporter-alerts.yml
+  - service.yml
+  - service-monitor.yml

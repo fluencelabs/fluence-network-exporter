@@ -1,0 +1,176 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMRule
+metadata:
+  name: fluence-network-exporter-alerts
+  labels:
+    app: fluence-network-exporter
+spec:
+  groups:
+  - name: fluence-network-exporter.rules
+    rules:
+      # - alert: FluenceKrasDown
+      #   for: 5m
+      #   expr: absent(up{job="fluence-network-exporter",env="kras"}) == 1
+      #   labels:
+      #     severity: fatal
+      #   annotations:
+      #     message: Fluence Network Exporter on Kras down
+
+      # - alert: FluenceTestnetDown
+      #   for: 5m
+      #   expr: absent(up{job="fluence-network-exporter",env="testnet"}) == 1
+      #   labels:
+      #     severity: fatal
+      #   annotations:
+      #     message: Fluence Network Exporter on Testnet down
+
+
+      - alert: FluenceWalletBalanceLow
+        for: 5m
+        expr: fluence_network_balance < fluence_network_balance_minimum * 1.2
+        labels:
+          severity: critical
+        annotations:
+          message: >
+            Balance of the wallet `{{ $labels.address }}` (`{{ $labels.name }}`) is `{{ $value }}` which is less than minimal
+            Env =  `{{ $labels.env }}`
+
+      - alert: FluenceWalletBalanceLowFatal
+        for: 5m
+        expr: avg_over_time(fluence_network_balance[10m]) < avg_over_time(fluence_network_balance_minimum[10m])
+        labels:
+          severity: fatal
+        annotations:
+          message: >
+            Balance of the wallet `{{ $labels.address }}` (`{{ $labels.name }}`) is `{{ $value }}` which is less than minimal
+            Env =  `{{ $labels.env }}`
+
+      - alert: FluenceSubgraphLagging
+        for: 5m
+        expr: max_over_time((fluence_network_block_height - fluence_network_subgraph_latest_block)[10m:1m]) >= 500
+        labels:
+          severity: critical
+        annotations:
+          message: >
+            Subgraph is `{{ $value }}`` blocks behind chain on `{{ $labels.env }}` 
+
+      - alert: FluenceSubgraphLaggingFatal
+        for: 5m
+        expr: max_over_time((fluence_network_block_height{env="kras"}  - fluence_network_subgraph_latest_block)[10m:1m]) >= 500
+        labels:
+          severity: fatal
+        annotations:
+          message: >
+            Subgraph is `{{ $value }}`` blocks behind chain on `{{ $labels.env }}` 
+
+      - alert: FluenceBlockProductionStopped
+        for: 5m
+        expr: (fluence_network_block_height - fluence_network_block_height offset 1m) < 1
+        labels:
+          severity: fatal
+        annotations:
+          message: >
+            No new blocks produced in {{ $labels.env }} for the last 5 minutes.
+
+      - alert: FluenceTransactionFailed
+        for: 5m
+        expr: fluence_network_transaction_status != 0
+        labels:
+          severity: fatal
+        annotations:
+          message: >
+            Transactions advancing block production failed for the last 5 minutes.
+
+      - alert: FluenceLowCUNotInDeal
+        for: 10m
+        labels:
+          severity: warning
+        expr: |
+          ((sum by (env) (fluence_network_peer_cu_unit_total) - sum by (env) (fluence_network_peer_cu_unit_in_deal))
+            / sum by (env) (fluence_network_peer_cu_unit_total)) * 100 < 30
+        annotations:
+          message: >
+            Low `{{ $value | humanizePercentage }}` of CU avaiable on {{ $labels.env }}.
+
+      - alert: FluenceLowCUNotInDealCritical
+        for: 10m
+        labels:
+          severity: critical
+        expr: |
+          ((sum by (env) (fluence_network_peer_cu_unit_total) - sum by (env) (fluence_network_peer_cu_unit_in_deal))
+            / sum by (env) (fluence_network_peer_cu_unit_total)) * 100 < 10
+        annotations:
+          message: >
+            Low `{{ $value | humanizePercentage }}` of CU avaiable on {{ $labels.env }}.
+
+      - alert: FluenceNoxBadHealth
+        for: 10m
+        labels:
+          severity: warning
+        expr: fluence_network_peer_cc_status != 1 AND fluence_network_peer_cc_status != 3
+        annotations:
+          message: >
+            Capicity Commitment status is unhealthy, status = `{{ $value }}`
+            Provider = `{{ $labels.provider_name }}`, peer id = `{{ $labels.peer_id }}`
+            Env = `{{ $labels.env }}`
+            `0=Inactive`, `1=Active`, `2=WaitDelegation`, `3=WaitStart`, `4=Failed`, `5=Removed`
+
+      - alert: FluencePeerNoCapacityCommitments
+        for: 10m
+        labels:
+          severity: warning
+        expr: avg_over_time(fluence_network_peer_cc_count[10m]) <= 0.9
+        annotations:
+          message: >
+            Peer `{{ $labels.peer_id }}` has no capacity commitments.
+            Provider = `{{ $labels.provider_name }}`, Env = `{{ $labels.env }}`
+
+      - alert: FluenceRewardBalanceTooLow
+        for: 10m
+        labels:
+          severity: fatal
+        expr: fluence_network_reward_balance < 50000
+        annotations:
+          message: >
+            Current reward balance on `{{ $labels.env }}` is `{{ $value }}, alert threshold is 50000`
+
+      - alert: FluenceTotalFailedCUsIncreased
+        for: 1m
+        labels:
+          severity: critical
+        expr: increase(fluence_network_cc_total_failed_cus{env="kras"}[10m]) > 0
+        annotations:
+          message: >
+            Total failed CUs number increased for `{{ $labels.provider_name }}` on `{{ $labels.env }}`
+
+      - alert: FluencePoolBalanceTooLow
+        for: 10m
+        labels:
+          severity: critical
+        expr: fluence_network_pool_balance < 15000
+        annotations:
+          message: >
+            Current pool balance on `{{ $labels.env }}` is `{{ $value }}, alert threshold is 15000`
+
+      - alert: FluenceRewardBalanceLowerThanRewards
+        for: 5m
+        expr: | 
+          avg_over_time(fluence_network_total_capacity_rewards[10m]) + avg_over_time(fluence_network_deal_staker_rewards[10m]) 
+          > avg_over_time(fluence_network_reward_balance[10m])  
+        labels:
+          severity: warning
+        annotations:
+          message: >
+            Reward balance is lower than total rewards amount on `{{ $labels.env }}`
+
+      - alert: FluenceInvalidCapacityCommitmentState
+        for: 10m
+        expr: | 
+          (fluence_network_cc_current_epoch_cus{env="kras",status="active"} + 
+          on(env, cc_id, provider_name) 
+          fluence_network_cc_current_epoch_cus{env="kras",status="exited"}) == 0
+        labels:
+          severity: critical
+        annotations:
+          message: >
+            `{{ $labels.provider_name }}` has active capacity commitment `{{ $labels.cc_id }}` with zero active units on `{{ $labels.env }}`
