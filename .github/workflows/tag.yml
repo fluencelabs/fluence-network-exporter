@@ -1,0 +1,60 @@
+name: Deploy sha to env & argo sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Env tag to point"
+        type: choice
+        required: true
+        options: [testnet, mainnet]
+      source_ref:
+        description: "Release tag (e.g. 1.5.0), branch, or commit SHA"
+        type: string
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  retag_and_sync:
+    name: "Set «${{ inputs.environment }}» -> ${{ inputs.source_ref }}; ArgoCD sync"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Checkout requested ref
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref }}
+          fetch-depth: 0
+
+      - name: Move env tag (create/update)
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: ${{ inputs.environment }}
+          commit_sha: ${{ steps.checkout.outputs.sha }}
+          message: "Set ${{ inputs.environment }} -> ${{ steps.checkout.outputs.sha }} by ${{ github.actor }}"
+          force_push_tag: true
+          tag_exists_error: false
+
+      - name: ArgoCD application sync
+        uses: omegion/argocd-actions@v1
+        with:
+          address: ${{ secrets.ARGOCD_SERVER }}
+          token:   ${{ secrets.ARGOCD_TOKEN }}
+          action:  sync
+          appName: ${{ secrets.ARGOCD_APP }}
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Env tag pointed & ArgoCD sync requested"
+            echo "- env tag:   \`${{ inputs.environment }}\`"
+            echo "- source:    \`${{ inputs.source_ref }}\`"
+            echo "- commit:    \`${{ steps.head.outputs.sha }}\`"
+            echo "- app:       \`${{ secrets.ARGOCD_APP }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
