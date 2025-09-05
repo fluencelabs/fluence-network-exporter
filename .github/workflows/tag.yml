@@ -1,4 +1,4 @@
-name: Deploy sha to env & argo sync
+name: deploy
 
 on:
   workflow_dispatch:
