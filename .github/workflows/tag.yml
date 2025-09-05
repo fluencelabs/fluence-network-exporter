@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   retag_and_sync:
-    name: "Set «${{ inputs.environment }}» -> ${{ inputs.source_ref }}; ArgoCD sync"
+    name: "Deploy ${{ inputs.source_ref }} to ${{ inputs.environment }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: ${{ inputs.environment }}
