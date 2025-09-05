@@ -35,8 +35,8 @@ jobs:
         uses: rickstaa/action-create-tag@v1
         with:
           tag: ${{ inputs.environment }}
-          commit_sha: ${{ steps.head.outputs.sha }}
-          message: "Set ${{ inputs.environment }} -> ${{ steps.head.outputs.sha }} by ${{ github.actor }}"
+          commit_sha: ${{ github.sha }}
+          message: "Set ${{ inputs.environment }} -> ${{ github.sha }} by ${{ github.actor }}"
           force_push_tag: true
           tag_exists_error: false
 
