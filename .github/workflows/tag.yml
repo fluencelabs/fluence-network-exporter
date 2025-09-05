@@ -1,0 +1,49 @@
+name: deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Env tag to point"
+        type: choice
+        required: true
+        options: [testnet, mainnet]
+      source_ref:
+        description: "Release tag (e.g. 1.5.0), branch, or commit SHA"
+        type: string
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  retag_and_sync:
+    name: "Deploy ${{ inputs.source_ref }} to ${{ inputs.environment }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Checkout requested ref
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref }}
+          fetch-depth: 0
+
+      - name: Move env tag (create/update)
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: ${{ inputs.environment }}
+          commit_sha: ${{ github.sha }}
+          message: "Set ${{ inputs.environment }} -> ${{ github.sha }} by ${{ github.actor }}"
+          force_push_tag: true
+          tag_exists_error: false
+
+      - name: ArgoCD application sync
+        uses: omegion/argocd-actions@v1
+        with:
+          address: ${{ secrets.ARGOCD_SERVER }}
+          token:   ${{ secrets.ARGOCD_TOKEN }}
+          action:  sync
+          appName: ${{ secrets.ARGOCD_APP }}
